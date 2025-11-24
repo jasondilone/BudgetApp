@@ -53,14 +53,14 @@ import com.example.budgetapp.ui.BottomNavigationBar
 
 
 
-
 @Composable
 fun AddScreen() {
 
     // selection will show "Expense" by default but can change to "Category"
-    var selection: String = "Expense"
+    var selection by remember {mutableStateOf("Expense")}
     var expanded by remember {mutableStateOf(false)}
     var amountInput by remember {mutableStateOf("")}
+    val currencyFormatter = remember { DecimalFormat("#,##0.00") }
     Scaffold(
         bottomBar = {BottomNavigationBar(2)}
     ) { innerPadding ->
@@ -117,7 +117,8 @@ fun AddScreen() {
                             )}
                     )
                     DropdownMenuItem(
-                        onClick = {expanded = false;
+                        onClick = {
+                            expanded = false;
                             selection = "Category"
                                   },
                         text = {Text(stringResource(R.string.category),
@@ -126,8 +127,11 @@ fun AddScreen() {
                     )
                 }
             }
+
+            // Text for "Expense"
             Text(
-                text = "Amount",
+                text = if(selection == "Expense") {"Amount"}
+                       else {"Name"},
                 fontSize = 20.sp,
                 modifier = Modifier.absoluteOffset(50.dp, 190.dp)
             )
@@ -135,18 +139,34 @@ fun AddScreen() {
                 textStyle = TextStyle(
                     fontSize = 40.sp
                 ),
-                leadingIcon = { Text("$", fontSize = 40.sp) },
+                leadingIcon = { Text(
+                    if(selection == "Expense") "$" else "", fontSize = 40.sp
+                ) },
                 //placeholder = { Text(stringResource(R.string.amount),
                 //    fontSize = 40.sp) },
                 value = amountInput,
-                onValueChange = { amountInput = it },
+                onValueChange = { newValue ->
+                    if (selection == "Expense") {
+                        val digits = newValue.filter { it.isDigit() }
+                        if (digits.isEmpty()) {
+                            amountInput = ""
+                        } else {
+                            val cents = digits.toLong()
+                            val value = cents / 100.0
+                            amountInput = currencyFormatter.format(value)
+                        }
+                    } else {
+                        amountInput = newValue
+                    }
+                },
                 modifier = Modifier
                     .width(300.dp)
                     .height(100.dp)
                     .absoluteOffset(35.dp, 200.dp)
                     .border(2.dp, Color.Black, RoundedCornerShape(16.dp)),
                 keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Number,
+                    keyboardType = if (selection == "Expense") KeyboardType.Number
+                                   else KeyboardType.Text,
                     imeAction = ImeAction.Next
                 ),
                 singleLine = true,

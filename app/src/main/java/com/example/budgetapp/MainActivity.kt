@@ -18,7 +18,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             BudgetAppTheme {
                 Surface(color = MaterialTheme.colorScheme.background) {
-                    Home()
+                    //Home()
+                    AddScreen()
                 }
             }
         }
