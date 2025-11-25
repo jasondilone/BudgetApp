@@ -52,14 +52,15 @@ import com.example.budgetapp.HomeSpentAndBudget
 import com.example.budgetapp.HomeBudgetRing
 
 @Composable
-fun ExpenseCard(expense:Expense) {
+fun ExpenseCard(expense: Expense) {
     val dateFormatter = DateTimeFormatter.ofPattern("MMM dd, yyyy")
     val formatter = DecimalFormat("#,###.00")
     val expenseAmountText = formatter.format(expense.amount)
 
     Surface(
         shape = RoundedCornerShape(16.dp),
-        modifier = Modifier.width(330.dp)
+        modifier = Modifier
+            .width(330.dp)
             .height(100.dp),
         color = lightPurpleColor,
         border = BorderStroke(2.dp, Color.Black)
@@ -69,14 +70,16 @@ fun ExpenseCard(expense:Expense) {
                 Text(
                     text = expense.category,
                     fontSize = 18.sp,
-                    modifier = Modifier.padding(10.dp)
+                    modifier = Modifier
+                        .padding(10.dp)
                         .padding(horizontal = 20.dp),
                     color = Color.White
                 )
                 Text(
                     text = "$$expenseAmountText",
                     fontSize = 35.sp,
-                    modifier = Modifier.padding(horizontal = 40.dp)
+                    modifier = Modifier
+                        .padding(horizontal = 40.dp)
                         .padding(bottom = 15.dp),
                     color = Color.White
                 )
@@ -86,7 +89,8 @@ fun ExpenseCard(expense:Expense) {
             ) {
                 Text(
                     text = expense.date.format(dateFormatter),
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .padding(15.dp)
                         .padding(horizontal = 25.dp),
                     fontSize = 14.sp,
@@ -98,7 +102,7 @@ fun ExpenseCard(expense:Expense) {
 }
 
 @Composable
-fun HomeExpenses(expenses: List<Expense>, onDelete: (Expense)->Unit, onEdit: (Expense) ->Unit){
+fun HomeExpenses(expenses: List<Expense>, onDelete: (Expense) -> Unit, onEdit: (Expense) -> Unit) {
     LazyColumn(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(10.dp),
@@ -151,13 +155,13 @@ fun HomeExpenses(expenses: List<Expense>, onDelete: (Expense)->Unit, onEdit: (Ex
 }
 
 
-
 @Composable
 fun BottomNavigationBar(selectedIndex: Int = 0) {
 
     var selectedButton = remember { mutableStateOf(selectedIndex) }
     Surface(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
             .height(100.dp),
         color = lightTealColor
     ) {
@@ -171,16 +175,19 @@ fun BottomNavigationBar(selectedIndex: Int = 0) {
                 onClick = {
                     selectedButton.value = 0
                 },
-                modifier = Modifier.size(60.dp)
+                modifier = Modifier
+                    .size(60.dp)
                     .background(
-                        if(selectedButton.value == 0)
+                        if (selectedButton.value == 0)
                             TealColor else Color.Transparent,
                         shape = CircleShape
                     )
                     .border(
-                        BorderStroke(2.dp,
-                            if(selectedButton.value == 0)
-                                Color.Black else Color.Transparent),
+                        BorderStroke(
+                            2.dp,
+                            if (selectedButton.value == 0)
+                                Color.Black else Color.Transparent
+                        ),
                         CircleShape
                     )
             ) {
@@ -196,16 +203,19 @@ fun BottomNavigationBar(selectedIndex: Int = 0) {
                 onClick = {
                     selectedButton.value = 1
                 },
-                modifier = Modifier.size(60.dp)
+                modifier = Modifier
+                    .size(60.dp)
                     .background(
-                        if(selectedButton.value == 1)
+                        if (selectedButton.value == 1)
                             TealColor else Color.Transparent,
                         shape = CircleShape
                     )
                     .border(
-                        BorderStroke(2.dp,
-                            if(selectedButton.value == 1)
-                                Color.Black else Color.Transparent),
+                        BorderStroke(
+                            2.dp,
+                            if (selectedButton.value == 1)
+                                Color.Black else Color.Transparent
+                        ),
                         CircleShape
                     )
             ) {
@@ -221,16 +231,19 @@ fun BottomNavigationBar(selectedIndex: Int = 0) {
                 onClick = {
                     selectedButton.value = 2
                 },
-                modifier = Modifier.size(60.dp)
+                modifier = Modifier
+                    .size(60.dp)
                     .background(
-                        if(selectedButton.value == 2)
+                        if (selectedButton.value == 2)
                             TealColor else Color.Transparent,
                         shape = CircleShape
                     )
                     .border(
-                        BorderStroke(2.dp,
-                            if(selectedButton.value == 2)
-                                Color.Black else Color.Transparent),
+                        BorderStroke(
+                            2.dp,
+                            if (selectedButton.value == 2)
+                                Color.Black else Color.Transparent
+                        ),
                         CircleShape
                     )
             ) {
@@ -246,16 +259,19 @@ fun BottomNavigationBar(selectedIndex: Int = 0) {
                 onClick = {
                     selectedButton.value = 3
                 },
-                modifier = Modifier.size(60.dp)
+                modifier = Modifier
+                    .size(60.dp)
                     .background(
-                        if(selectedButton.value == 3)
+                        if (selectedButton.value == 3)
                             TealColor else Color.Transparent,
                         shape = CircleShape
                     )
                     .border(
-                        BorderStroke(2.dp,
-                            if(selectedButton.value == 3)
-                                Color.Black else Color.Transparent),
+                        BorderStroke(
+                            2.dp,
+                            if (selectedButton.value == 3)
+                                Color.Black else Color.Transparent
+                        ),
                         CircleShape
                     )
             ) {
@@ -271,16 +287,19 @@ fun BottomNavigationBar(selectedIndex: Int = 0) {
                 onClick = {
                     selectedButton.value = 4
                 },
-                modifier = Modifier.size(60.dp)
+                modifier = Modifier
+                    .size(60.dp)
                     .background(
-                        if(selectedButton.value == 4)
+                        if (selectedButton.value == 4)
                             TealColor else Color.Transparent,
                         shape = CircleShape
                     )
                     .border(
-                        BorderStroke(2.dp,
-                            if(selectedButton.value == 4)
-                                Color.Black else Color.Transparent),
+                        BorderStroke(
+                            2.dp,
+                            if (selectedButton.value == 4)
+                                Color.Black else Color.Transparent
+                        ),
                         CircleShape
                     )
             ) {
@@ -300,7 +319,9 @@ fun Home() {
 
     Scaffold(bottomBar = { BottomNavigationBar() }) { innerPadding ->
         Column(
-            modifier = Modifier.padding(all = 8.dp).padding(innerPadding)
+            modifier = Modifier
+                .padding(all = 8.dp)
+                .padding(innerPadding)
         ) {
             HomeSpentAndBudget(spent, budget)
             Spacer(Modifier.height(70.dp))

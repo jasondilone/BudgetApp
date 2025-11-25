@@ -25,6 +25,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
 // Data
 data class Expense(
     val category: String,

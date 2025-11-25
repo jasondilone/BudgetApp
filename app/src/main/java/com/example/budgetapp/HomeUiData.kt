@@ -33,7 +33,9 @@ fun HomeSpentAndBudget(spent: Double, budget: Double) {
     val spentText = formatter.format(spent)
     val budgetText = formatter.format(budget)
     Row(
-        modifier = Modifier.fillMaxWidth().padding(top = 50.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 50.dp),
         horizontalArrangement = Arrangement.spacedBy(20.dp)
     ) {
 
@@ -48,13 +50,15 @@ fun HomeSpentAndBudget(spent: Double, budget: Double) {
         ) {
             Text(
                 "Spent",
-                modifier = Modifier.padding(all = 10.dp)
+                modifier = Modifier
+                    .padding(all = 10.dp)
                     .wrapContentWidth(Alignment.CenterHorizontally),
                 color = Color.White
             )
             Text(
                 text = "$$spentText",
-                modifier = Modifier.padding(all = 30.dp)
+                modifier = Modifier
+                    .padding(all = 30.dp)
                     .wrapContentWidth(Alignment.CenterHorizontally),
                 color = Color.White,
                 fontSize = autoFontSize(spentText),
@@ -73,13 +77,15 @@ fun HomeSpentAndBudget(spent: Double, budget: Double) {
         ) {
             Text(
                 "Budget",
-                modifier = Modifier.padding(all = 10.dp)
+                modifier = Modifier
+                    .padding(all = 10.dp)
                     .wrapContentWidth(Alignment.CenterHorizontally),
                 color = Color.White,
             )
             Text(
                 text = "$$budgetText",
-                modifier = Modifier.padding(all = 30.dp)
+                modifier = Modifier
+                    .padding(all = 30.dp)
                     .wrapContentWidth(Alignment.CenterHorizontally),
                 color = Color.White,
                 fontSize = autoFontSize(budgetText),
@@ -92,10 +98,11 @@ fun HomeSpentAndBudget(spent: Double, budget: Double) {
 @Composable
 fun HomeBudgetRing() {
     val spentPercentage: Float = 100 * (spent / budget).toFloat()
-    val ringAngle: Float = 360 * (spent/budget).toFloat()
+    val ringAngle: Float = 360 * (spent / budget).toFloat()
     val percentageNoDecimals = "%.0f".format(spentPercentage)
     Column(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
             .height(150.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -118,7 +125,8 @@ fun HomeBudgetRing() {
                     useCenter = false,
                     style = Stroke(
                         width = 111.0f,
-                        cap = StrokeCap.Round)
+                        cap = StrokeCap.Round
+                    )
                 )
 
                 // ring
@@ -129,7 +137,8 @@ fun HomeBudgetRing() {
                     useCenter = false,
                     style = Stroke(
                         width = 100.0f,
-                        cap = StrokeCap.Round)
+                        cap = StrokeCap.Round
+                    )
                 )
             }
         }
