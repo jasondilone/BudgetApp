@@ -5,8 +5,12 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.budgetapp.ui.theme.BudgetAppTheme
 import java.time.LocalDate
 import com.example.budgetapp.ui.Home
@@ -19,7 +23,8 @@ class MainActivity : ComponentActivity() {
             BudgetAppTheme {
                 Surface(color = MaterialTheme.colorScheme.background) {
                     //Home()
-                    AddScreen()
+                    //AddScreen()
+                    BudgetApp()
                 }
             }
         }
@@ -58,3 +63,26 @@ fun autoFontSize(text: String): TextUnit {
         else -> 15.sp
     }
 }
+
+@Composable
+fun BudgetApp() {
+    val navController = rememberNavController()
+    NavHost(
+        navController = navController,
+        startDestination = "Home"
+    ) {
+        composable("Home") {
+            Home(navController)
+        }
+        composable("Add") {
+            AddScreen(navController)
+        }
+    }
+}
+
+
+
+
+
+
+

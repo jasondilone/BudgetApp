@@ -33,6 +33,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavController
 
 
 //imports for data in mainact and colors.kt, also moved hgomespenandbudged and homebudgetring
@@ -156,7 +157,7 @@ fun HomeExpenses(expenses: List<Expense>, onDelete: (Expense) -> Unit, onEdit: (
 
 
 @Composable
-fun BottomNavigationBar(selectedIndex: Int = 0) {
+fun BottomNavigationBar(selectedIndex: Int = 0, navController: NavController) {
 
     var selectedButton = remember { mutableStateOf(selectedIndex) }
     Surface(
@@ -173,7 +174,8 @@ fun BottomNavigationBar(selectedIndex: Int = 0) {
             //HOME ICON
             IconButton(
                 onClick = {
-                    selectedButton.value = 0
+                    selectedButton.value = 0;
+                    navController.navigate("Home")
                 },
                 modifier = Modifier
                     .size(60.dp)
@@ -229,7 +231,8 @@ fun BottomNavigationBar(selectedIndex: Int = 0) {
             // ADD EXPENSE ICON
             IconButton(
                 onClick = {
-                    selectedButton.value = 2
+                    selectedButton.value = 2;
+                    navController.navigate("Add")
                 },
                 modifier = Modifier
                     .size(60.dp)
@@ -314,10 +317,10 @@ fun BottomNavigationBar(selectedIndex: Int = 0) {
 }
 
 @Composable
-fun Home() {
+fun Home(navController: NavController) {
     val expensesState = remember { mutableStateListOf<Expense>().apply { addAll(expenses) } }
 
-    Scaffold(bottomBar = { BottomNavigationBar() }) { innerPadding ->
+    Scaffold(bottomBar = { BottomNavigationBar(0, navController) }) { innerPadding ->
         Column(
             modifier = Modifier
                 .padding(all = 8.dp)

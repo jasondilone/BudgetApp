@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 
 import com.example.budgetapp.ui.BottomNavigationBar
 
@@ -15,9 +16,9 @@ import com.example.budgetapp.ui.BottomNavigationBar
 
 
 @Composable
-fun Settings() {
+fun Settings(navController: NavController) {
     Scaffold(
-        bottomBar = {BottomNavigationBar(4)}
+        bottomBar = {BottomNavigationBar(4, navController)}
     ) { innerPadding ->
         Column(
             modifier = Modifier.padding(all = 8.dp)
@@ -31,5 +32,5 @@ fun Settings() {
 @Preview(showBackground = true)
 @Composable
 fun SettingsPreview() {
-    Settings()
+    //Settings()
 }

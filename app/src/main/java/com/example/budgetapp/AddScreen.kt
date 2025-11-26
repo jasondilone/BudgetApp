@@ -41,6 +41,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import java.text.DecimalFormat
 
 import com.example.budgetapp.ui.theme.lightTealColor
@@ -48,7 +49,7 @@ import com.example.budgetapp.ui.BottomNavigationBar
 
 
 @Composable
-fun AddScreen() {
+fun AddScreen(navController: NavController) {
 
     // selection will show "Expense" by default but can change to "Category"
     var selection by remember { mutableStateOf("Expense") }
@@ -58,7 +59,7 @@ fun AddScreen() {
     val currencyFormatter = remember { DecimalFormat("#,##0.00") }
     val categoryInput = remember { mutableStateOf("") }
     Scaffold(
-        bottomBar = { BottomNavigationBar(2) }
+        bottomBar = { BottomNavigationBar(2, navController) }
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -287,5 +288,5 @@ fun AddScreen() {
 @Preview(showBackground = true)
 @Composable
 fun AddPreview() {
-    AddScreen()
+    //AddScreen()
 }
