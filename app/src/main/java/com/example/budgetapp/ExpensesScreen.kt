@@ -3,32 +3,29 @@ package com.example.budgetapp
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -42,30 +39,99 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.budgetapp.theme.BudgetAppTheme
+import java.time.LocalDate
 
 @Composable
-fun Add(modifier: Modifier = Modifier) {
-    var expandedType by remember { mutableStateOf(false) }
+fun Expenses(modifier: Modifier = Modifier) {
     var expandedCategory by remember { mutableStateOf(false) }
-    var expandedCategorySelection by remember { mutableStateOf(false) }
-    var typeSelection by remember { mutableStateOf(R.string.expense) }
-    var amountInput by remember { mutableStateOf("") }
-    var isRecurring by remember { mutableStateOf(false) }
+    var expandedTime by remember { mutableStateOf(false) }
+
+    // Sample Data
+    val expenses = listOf<Expense>(
+        Expense("Food",
+            "",
+            26.02,
+            LocalDate.now(),
+            false
+        ),
+        Expense(
+            "Subscription",
+            "YouTube Premium",
+            11.10,
+            LocalDate.now(),
+            true
+        ),
+        Expense("Shopping",
+            "Target",
+            39.99,
+            LocalDate.now(),
+            false
+        ),
+        Expense("Shopping",
+            "Amazon",
+            67.23,
+            LocalDate.now(),
+            false
+        ),
+        Expense("Food",
+            "Restaurant",
+            80.17,
+            LocalDate.now(),
+            false
+        ),
+        Expense("Bills",
+            "insurance",
+            193.88,
+            LocalDate.now(),
+            true
+        ),
+        Expense("Subscription",
+            "Spotify",
+            15.00,
+            LocalDate.now(),
+            true
+        ),
+    )
 
     Column(
-        modifier = modifier.fillMaxSize().padding(top = 25.dp)
-            .background(color = MaterialTheme.colorScheme.background),
+        modifier = modifier.fillMaxSize().padding(top = 25.dp),
         verticalArrangement = Arrangement.Top
     ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Expenses
+            Text(
+                text = stringResource(R.string.expenses),
+                fontSize = largeFontSize,
+                modifier = Modifier.padding(horizontal = 10.dp)
+            )
+            Spacer(modifier = Modifier.weight(1f))
 
-        // Add Expense/Category
-        Text(
-            text = stringResource(R.string.add_expense_and_category),
-            fontSize = largeFontSize,
-            modifier = Modifier.padding(horizontal = 10.dp)
-        )
+            // Clear all
+            Box(
+                modifier = Modifier
+                    .clickable {
+                        // "Clear all" logic here
+                    }
+            ) {
+                Text(
+                    text = stringResource(R.string.clear_all),
+                    fontSize = smallFontSize,
+                    color = MaterialTheme.colorScheme.tertiary,
+                    modifier = Modifier
+                        .padding(
+                            start = 40.dp,
+                            end = 40.dp,
+                            top = 5.dp,
+                            bottom = 5.dp
+                        )
+                )
+            }
+        }
 
-        // Type Selection
+        // Category selection
         Surface(
             modifier = Modifier.fillMaxWidth().padding(10.dp),
             shape = RoundedCornerShape(roundDp),
@@ -91,7 +157,7 @@ fun Add(modifier: Modifier = Modifier) {
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = stringResource(R.string.expense),
+                            text = stringResource(R.string.all_categories),
                             fontSize = mediumFontSize,
                             color = MaterialTheme.colorScheme.tertiary,
                             maxLines = 1,
@@ -99,7 +165,6 @@ fun Add(modifier: Modifier = Modifier) {
                         )
                     }
                 }
-
                 // Dropdown
                 IconButton(
                     onClick = { expandedCategory = true }
@@ -109,6 +174,7 @@ fun Add(modifier: Modifier = Modifier) {
                         contentDescription = null
                     )
                 }
+
                 DropdownMenu(
                     expanded = expandedCategory,
                     onDismissRequest = { expandedCategory = false },
@@ -121,52 +187,11 @@ fun Add(modifier: Modifier = Modifier) {
                 }
             }
         }
-        Spacer(modifier = Modifier.height(80.dp))
 
-        // Amount
-        Text(
-            text = stringResource(R.string.amount),
-            fontSize = mediumFontSize,
-            modifier = Modifier.padding(horizontal = 10.dp)
-                .padding(bottom = 12.dp)
-        )
-
+        // Time selection
         Surface(
-            modifier = Modifier.fillMaxWidth()
-                .padding(horizontal = 10.dp)
-                .padding(bottom = 10.dp)
-                .height(50.dp),
-            shape = RoundedCornerShape(roundDp),
-            color = MaterialTheme.colorScheme.primary,
-            border = BorderStroke(0.dp, MaterialTheme.colorScheme.secondary)
-        ) {
-            Row(
-                modifier = Modifier.padding(0.dp)
-                    .fillMaxWidth()
-                    .height(IntrinsicSize.Min)
-                    .align(Alignment.Start),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = stringResource(R.string.dollar_sign),
-                    fontSize = mediumFontSize,
-                    color = MaterialTheme.colorScheme.tertiary,
-                    maxLines = 1,
-                    modifier = Modifier.padding(horizontal = 20.dp)
-                )
-            }
-        }
-
-        // Category
-        Text(
-            text = stringResource(R.string.category),
-            fontSize = mediumFontSize,
-            modifier = Modifier.padding(horizontal = 10.dp)
-        )
-
-        // Category Selection
-        Surface(
-            modifier = Modifier.fillMaxWidth().padding(10.dp),
+            modifier = Modifier.fillMaxWidth().padding(10.dp)
+                .padding(bottom = 10.dp),
             shape = RoundedCornerShape(roundDp),
             color = MaterialTheme.colorScheme.primary,
             border = BorderStroke(0.dp, MaterialTheme.colorScheme.secondary)
@@ -190,7 +215,7 @@ fun Add(modifier: Modifier = Modifier) {
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = stringResource(R.string.other),
+                            text = stringResource(R.string.this_month),
                             fontSize = mediumFontSize,
                             color = MaterialTheme.colorScheme.tertiary,
                             maxLines = 1,
@@ -198,22 +223,22 @@ fun Add(modifier: Modifier = Modifier) {
                         )
                     }
                 }
-
                 // Dropdown
                 IconButton(
-                    onClick = { expandedCategorySelection = true }
+                    onClick = { expandedTime = true }
                 ) {
                     Icon(
                         imageVector = Icons.Filled.KeyboardArrowDown,
                         contentDescription = null
                     )
                 }
+
                 DropdownMenu(
-                    expanded = expandedCategorySelection,
-                    onDismissRequest = { expandedCategorySelection = false },
+                    expanded = expandedTime,
+                    onDismissRequest = { expandedTime = false },
                     modifier = Modifier
                         .width(330.dp)
-                        .border(2.dp, MaterialTheme.colorScheme.onPrimary, RoundedCornerShape(roundDp))
+                        .border(2.dp, Color.Black, RoundedCornerShape(roundDp))
                         .background(MaterialTheme.colorScheme.tertiary, RoundedCornerShape(roundDp))
                 ) {
 
@@ -221,63 +246,25 @@ fun Add(modifier: Modifier = Modifier) {
             }
         }
 
-        Row(
-            modifier = Modifier.fillMaxWidth()
-                .height(50.dp),
-            verticalAlignment = Alignment.CenterVertically
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(0.dp)
         ) {
-            Text(
-                text = stringResource(R.string.recurring),
-                fontSize = mediumFontSize,
-                modifier = Modifier.padding(horizontal = 10.dp)
-            )
-            Spacer(modifier = Modifier.weight(1f))
-            Switch(
-                checked = isRecurring,
-                onCheckedChange = { isRecurring = it },
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .padding(horizontal = 20.dp),
-                colors = SwitchDefaults.colors(
-                    checkedThumbColor = MaterialTheme.colorScheme.primary,
-                    checkedTrackColor = MaterialTheme.colorScheme.secondary,
-                    uncheckedThumbColor = MaterialTheme.colorScheme.secondary,
-                    uncheckedTrackColor = MaterialTheme.colorScheme.primary,
-                    uncheckedBorderColor = MaterialTheme.colorScheme.secondary
-                )
-            )
-        }
-
-
-        Row(
-            modifier = Modifier.fillMaxWidth()
-                .padding(20.dp),
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Button(
-                onClick = {  },
-                shape = RoundedCornerShape(64.dp),
-                modifier = Modifier.size(180.dp, 50.dp),
-                colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.secondary)
-            ) {
-                Text(
-                    text = stringResource(R.string.add),
-                    fontSize = mediumFontSize,
-                    color = MaterialTheme.colorScheme.onSecondary
-                )
+            items(expenses) { expense ->
+                ExpenseCard(expense = expense)
             }
         }
+
+
     }
 }
 
 @Preview
 @Composable
-fun AddPreview() {
-
+fun ExpensesPreview() {
     BudgetAppTheme(false) {
         Scaffold(
             bottomBar = {
-                Box (
+                Box(
                     modifier = Modifier.padding(horizontal = 20.dp)
                         .padding(top = 8.dp, bottom = 32.dp)
                 ) {
@@ -285,7 +272,7 @@ fun AddPreview() {
                 }
             }
         ) { innerPadding ->
-            Add(modifier = Modifier.padding(innerPadding))
+            Expenses(modifier = Modifier.padding(innerPadding))
         }
     }
 }

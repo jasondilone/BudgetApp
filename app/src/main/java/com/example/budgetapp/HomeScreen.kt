@@ -1,354 +1,257 @@
-package com.example.budgetapp.ui
+package com.example.budgetapp
 
-import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.*
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.*
-
-import com.example.budgetapp.ui.theme.BudgetAppTheme
-import java.text.DecimalFormat
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-
-import androidx.compose.foundation.background
-
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.SwipeToDismissBox
-import androidx.compose.material3.SwipeToDismissBoxValue
-import androidx.compose.material3.rememberSwipeToDismissBoxState
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavController
-
-
-//imports for data in mainact and colors.kt, also moved hgomespenandbudged and homebudgetring
-// to HomeUiData.kt becuase of conflicting//overloading compiling issues
-import com.example.budgetapp.ui.theme.lightTealColor
-import com.example.budgetapp.ui.theme.lightPurpleColor
-import com.example.budgetapp.ui.theme.TealColor
-
-import com.example.budgetapp.Expense
-import com.example.budgetapp.expenses
-import com.example.budgetapp.sampleExpense
-import com.example.budgetapp.spent
-import com.example.budgetapp.budget
-import com.example.budgetapp.autoFontSize
-
-import com.example.budgetapp.HomeSpentAndBudget
-import com.example.budgetapp.HomeBudgetRing
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.example.budgetapp.theme.BudgetAppTheme
+import com.example.budgetapp.theme.orangeColor
+import java.time.LocalDate
 
 @Composable
-fun ExpenseCard(expense: Expense) {
-    val dateFormatter = DateTimeFormatter.ofPattern("MMM dd, yyyy")
-    val formatter = DecimalFormat("#,###.00")
-    val expenseAmountText = formatter.format(expense.amount)
+fun Home(modifier: Modifier = Modifier) {
 
-    Surface(
-        shape = RoundedCornerShape(16.dp),
-        modifier = Modifier
-            .width(330.dp)
-            .height(100.dp),
-        color = lightPurpleColor,
-        border = BorderStroke(2.dp, Color.Black)
+    // for ring's dark mode colors
+    val materialPrimary = MaterialTheme.colorScheme.primary
+    val materialBackground = MaterialTheme.colorScheme.background
+    val materialSecondary = MaterialTheme.colorScheme.secondary
+
+    // Sample Data
+    val expenses = remember {
+        mutableListOf<Expense>(
+        Expense("Food",
+            "deli",
+            26.02,
+            LocalDate.now(),
+            false
+        ),
+        Expense("Subscription",
+            "Prime",
+            11.10,
+            LocalDate.now(),
+            true
+        ),
+        Expense("Shopping",
+            "Amazon",
+            39.99,
+            LocalDate.now(),
+            false
+        ),
+        Expense("Shopping",
+            "Best Buy",
+            67.23,
+            LocalDate.now(),
+            false
+        ),
+        Expense("Food",
+            "Restaurant",
+            80.17,
+            LocalDate.now(),
+            false
+        ),
+        Expense("Bills",
+            "insurance",
+            193.88,
+            LocalDate.now(),
+            true
+        ),
+        Expense("Subscription",
+            "Spotify",
+            15.00,
+            LocalDate.now(),
+            true
+        )
+    ) }
+
+    var spentPercentage = ((spent/budget) * 100).toInt()
+    var ringPercent: Float = ((spent/budget) * 360).toFloat()
+    var percentColor = when (spentPercentage) {
+        in 0..79 -> MaterialTheme.colorScheme.onBackground
+        in 80..99 -> orangeColor
+        else -> MaterialTheme.colorScheme.onSurfaceVariant
+    }
+
+    Column(
+        modifier = modifier.fillMaxSize().padding(top = 25.dp)
+            .background(color = MaterialTheme.colorScheme.background),
+        verticalArrangement = Arrangement.Top
     ) {
-        Row {
-            Column {
-                Text(
-                    text = expense.category,
-                    fontSize = 18.sp,
-                    modifier = Modifier
-                        .padding(10.dp)
-                        .padding(horizontal = 20.dp),
-                    color = Color.White
-                )
-                Text(
-                    text = "$$expenseAmountText",
-                    fontSize = 35.sp,
-                    modifier = Modifier
-                        .padding(horizontal = 40.dp)
-                        .padding(bottom = 15.dp),
-                    color = Color.White
-                )
-            }
-            Column(
-                modifier = Modifier.fillMaxWidth()
+
+        // Home
+        Text(
+            text = stringResource(R.string.home),
+            fontSize = largeFontSize,
+            modifier = Modifier.padding(horizontal = 10.dp)
+        )
+
+        // Spent | Budget
+        Surface(
+            modifier = Modifier.fillMaxWidth().padding(10.dp),
+            shape = RoundedCornerShape(roundDp),
+            color = MaterialTheme.colorScheme.secondary,
+            border = BorderStroke(0.dp, MaterialTheme.colorScheme.tertiary)
+        ) {
+            Row(
+                modifier = Modifier.padding(10.dp)
+                    .fillMaxWidth()
+                    .height(IntrinsicSize.Min),
+                horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                Text(
-                    text = expense.date.format(dateFormatter),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(15.dp)
-                        .padding(horizontal = 25.dp),
-                    fontSize = 14.sp,
-                    color = Color.White
-                )
+
+                // Spent Column
+                Column(
+                    modifier = Modifier.weight(1f),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = stringResource(R.string.spent),
+                        fontSize = mediumFontSize,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Text(
+                        text = "$" + centsNumberFormatter.format(spent),
+                        fontSize = mediumFontSize,
+                        maxLines = 1,
+                        color = MaterialTheme.colorScheme.onSecondary
+                    )
+                }
+
+                // Line in between Spent and Budget
+                Canvas(
+                    modifier = Modifier.padding(0.dp)
+                        .fillMaxHeight()
+                        .width(1.dp)
+                ) {
+                    drawLine(
+                        color = materialPrimary,
+                        strokeWidth = 8f,
+                        start = Offset(size.width / 2f, 0f),
+                        end = Offset(size.width / 2f, size.height)
+                    )
+                }
+
+                // Budget Column
+                Column(
+                    modifier = Modifier.weight(1f),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "" + stringResource(R.string.budget),
+                        fontSize = mediumFontSize,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Text(
+                        text = "$" + noCentsNumberFormatter.format(budget),
+                        fontSize = mediumFontSize,
+                        maxLines = 1
+                    )
+                }
             }
         }
-    }
-}
 
-@Composable
-fun HomeExpenses(expenses: List<Expense>, onDelete: (Expense) -> Unit, onEdit: (Expense) -> Unit) {
-    LazyColumn(
-        modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(10.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        items(expenses, key = { it.hashCode() }) { expense ->
-            val dismissState = rememberSwipeToDismissBoxState(
-                confirmValueChange = { value ->
-                    value != SwipeToDismissBoxValue.Settled
-                }
-            )
-
-            SwipeToDismissBox(
-                state = dismissState,
-                enableDismissFromStartToEnd = false,
-                backgroundContent = {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(Color.LightGray)
-                            .padding(end = 24.dp),
-                        horizontalArrangement = Arrangement.End,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        //DELETE
-                        IconButton(onClick = { onDelete(expense) }) {
-                            Icon(
-                                imageVector = Icons.Default.Close,
-                                contentDescription = "Delete",
-                                tint = Color.Red
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(16.dp))
-                        //EDIT
-                        IconButton(onClick = { onEdit(expense) }) {
-                            Icon(
-                                imageVector = Icons.Default.Settings,
-                                contentDescription = "Edit",
-                                tint = Color.Blue
-                            )
-                        }
-                    }
-                },
-                content = {
-                    ExpenseCard(expense)
-                }
+        // Ring
+        Box(
+            modifier = Modifier.fillMaxWidth().padding(10.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Canvas(
+                modifier = Modifier.size(200.dp)
+            ) {
+                val strokeWidth = 65f
+                val diameter = size.minDimension
+                val arcSize = Size(
+                    width = diameter - strokeWidth,
+                    height = diameter - strokeWidth
+                )
+                val topLeft = Offset(
+                    (size.width - arcSize.width)/2f,
+                    (size.height - arcSize.height)/2f
+                )
+                drawCircle(color = materialPrimary)
+                drawCircle(color = materialBackground, radius = 200f)
+                drawArc(
+                    color = materialSecondary,
+                    startAngle = 270f,
+                    sweepAngle = ringPercent,
+                    useCenter = false,
+                    topLeft = topLeft,
+                    size = arcSize,
+                    style = Stroke(strokeWidth)
+                )
+            }
+            Text(
+                text = noCentsNumberFormatter.format(spentPercentage) + "%",
+                fontSize = largeFontSize,
+                color = percentColor
             )
         }
-    }
-}
-
-
-@Composable
-fun BottomNavigationBar(selectedIndex: Int = 0, navController: NavController) {
-
-    var selectedButton = remember { mutableStateOf(selectedIndex) }
-    Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(100.dp),
-        color = lightTealColor
-    ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceEvenly
+            modifier = Modifier.fillMaxWidth()
         ) {
-            //HOME ICON
-            IconButton(
-                onClick = {
-                    selectedButton.value = 0;
-                    navController.navigate("Home")
-                },
-                modifier = Modifier
-                    .size(60.dp)
-                    .background(
-                        if (selectedButton.value == 0)
-                            TealColor else Color.Transparent,
-                        shape = CircleShape
-                    )
-                    .border(
-                        BorderStroke(
-                            2.dp,
-                            if (selectedButton.value == 0)
-                                Color.Black else Color.Transparent
-                        ),
-                        CircleShape
-                    )
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Home,
-                    contentDescription = "Home Icon",
-                    modifier = Modifier.size(35.dp),
-                )
-            }
-
-            // EXPENSE ITEM LIST
-            IconButton(
-                onClick = {
-                    selectedButton.value = 1
-                },
-                modifier = Modifier
-                    .size(60.dp)
-                    .background(
-                        if (selectedButton.value == 1)
-                            TealColor else Color.Transparent,
-                        shape = CircleShape
-                    )
-                    .border(
-                        BorderStroke(
-                            2.dp,
-                            if (selectedButton.value == 1)
-                                Color.Black else Color.Transparent
-                        ),
-                        CircleShape
-                    )
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.List,
-                    contentDescription = "Expenses Icon",
-                    modifier = Modifier.size(35.dp)
-                )
-            }
-
-            // ADD EXPENSE ICON
-            IconButton(
-                onClick = {
-                    selectedButton.value = 2;
-                    navController.navigate("Add")
-                },
-                modifier = Modifier
-                    .size(60.dp)
-                    .background(
-                        if (selectedButton.value == 2)
-                            TealColor else Color.Transparent,
-                        shape = CircleShape
-                    )
-                    .border(
-                        BorderStroke(
-                            2.dp,
-                            if (selectedButton.value == 2)
-                                Color.Black else Color.Transparent
-                        ),
-                        CircleShape
-                    )
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Add,
-                    contentDescription = "Add expenses Icon",
-                    modifier = Modifier.size(35.dp)
-                )
-            }
-
-            //CHARTS ICON
-            IconButton(
-                onClick = {
-                    selectedButton.value = 3
-                },
-                modifier = Modifier
-                    .size(60.dp)
-                    .background(
-                        if (selectedButton.value == 3)
-                            TealColor else Color.Transparent,
-                        shape = CircleShape
-                    )
-                    .border(
-                        BorderStroke(
-                            2.dp,
-                            if (selectedButton.value == 3)
-                                Color.Black else Color.Transparent
-                        ),
-                        CircleShape
-                    )
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.BarChart,
-                    contentDescription = "Charts Icon",
-                    modifier = Modifier.size(35.dp)
-                )
-            }
-
-            //SETTINGS ICON
-            IconButton(
-                onClick = {
-                    selectedButton.value = 4
-                },
-                modifier = Modifier
-                    .size(60.dp)
-                    .background(
-                        if (selectedButton.value == 4)
-                            TealColor else Color.Transparent,
-                        shape = CircleShape
-                    )
-                    .border(
-                        BorderStroke(
-                            2.dp,
-                            if (selectedButton.value == 4)
-                                Color.Black else Color.Transparent
-                        ),
-                        CircleShape
-                    )
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Settings,
-                    contentDescription = "Settings Icon",
-                    modifier = Modifier.size(35.dp)
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun Home(navController: NavController) {
-    val expensesState = remember { mutableStateListOf<Expense>().apply { addAll(expenses) } }
-
-    Scaffold(bottomBar = { BottomNavigationBar(0, navController) }) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .padding(all = 8.dp)
-                .padding(innerPadding)
-        ) {
-            HomeSpentAndBudget(spent, budget)
-            Spacer(Modifier.height(70.dp))
-            HomeBudgetRing()
-            Spacer(Modifier.height(70.dp))
-            HomeExpenses(
-                expenses = expensesState,
-                onDelete = { expenseToDelete -> expensesState.remove(expenseToDelete) },
-                onEdit = { expenseToEdit ->
-                    // gear option on left swipe, editing option (maybe)
-                }
+            Text(
+                text = stringResource(R.string.recent_expenses),
+                fontSize = mediumFontSize,
+                modifier = Modifier.padding(horizontal = 10.dp)
+                    .padding(bottom = 12.dp)
             )
         }
+
+        LazyColumn(
+            modifier = Modifier
+                .padding(0.dp),
+            verticalArrangement = Arrangement.spacedBy(0.dp)
+        ) {
+            items(expenses) { expense ->
+                ExpenseCard(expense = expense)
+            }
+        }
     }
 }
 
-
-/*
 @Preview(showBackground = true)
 @Composable
 fun HomePreview() {
-    BudgetAppTheme {
-        Home()
+    BudgetAppTheme(false) {
+        Scaffold(
+            bottomBar = {
+                Box(
+                    modifier = Modifier.background(MaterialTheme.colorScheme.background)
+                        .padding(horizontal = 20.dp)
+                        .padding(top = 8.dp, bottom = 32.dp)
+                ) {
+                    NavigationBar()
+                }
+            }
+        ) { innerPadding ->
+            Home(modifier = Modifier.padding(innerPadding))
+        }
     }
 }
- */
-

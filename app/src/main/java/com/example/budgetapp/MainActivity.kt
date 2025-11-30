@@ -3,27 +3,32 @@ package com.example.budgetapp
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.unit.TextUnit
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import com.example.budgetapp.ui.theme.BudgetAppTheme
-import java.time.LocalDate
-import com.example.budgetapp.ui.Home
-
+import com.example.budgetapp.theme.BudgetAppTheme
+//import com.example.com.example.budgetapp.BudgetAppTheme
+import java.text.DecimalFormat
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         setContent {
-            BudgetAppTheme {
-                Surface(color = MaterialTheme.colorScheme.background) {
-                    //Home()
-                    //AddScreen()
+            BudgetAppTheme(darkTheme = false) {
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     BudgetApp()
                 }
             }
@@ -31,58 +36,59 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-// Data
-data class Expense(
-    val category: String,
-    val amount: Double,
-    val date: LocalDate
-)
+// Font Sizes
+val largeFontSize = 35.sp
+val mediumFontSize = 25.sp
+val smallFontSize = 15.sp
 
-// Sample data
-val sampleExpense = Expense("Shopping 🛍", 1888.80, LocalDate.now())
-val expenses = mutableListOf(
-    Expense("Food 🍔", 23.15, LocalDate.now()),
-    Expense("Bills 🧾", 233.98, LocalDate.now()),
-    Expense("Food 🍔", 13.29, LocalDate.now()),
-    Expense("Shopping 🛍", 48.03, LocalDate.now()),
-    Expense("Subscriptions 🔁", 14.99, LocalDate.now()),
-    Expense("Bills 🧾", 69.95, LocalDate.now())
-)
+// Formatters
+val centsNumberFormatter = DecimalFormat("#,###.00")
+val noCentsNumberFormatter = DecimalFormat("#,###")
 
-// Globals
-val spent: Double = 374.70
-val budget: Double = 1000.00
+// Roundness for surfaces
+val roundDp: Dp = 8.dp
 
-
-//Helpers
-fun autoFontSize(text: String): TextUnit {
-    return when {
-        text.length <= 8 -> 30.sp
-        text.length <= 10 -> 25.sp
-        text.length <= 12 -> 20.sp
-        else -> 15.sp
-    }
-}
+// Spent | Budget
+var spent = 128.50
+var budget = 1000
 
 @Composable
 fun BudgetApp() {
-    val navController = rememberNavController()
-    NavHost(
-        navController = navController,
-        startDestination = "Home"
-    ) {
-        composable("Home") {
-            Home(navController)
+    var isDarkMode by remember { mutableStateOf(false) }
+
+    Scaffold(
+        bottomBar = {
+            Box (
+                modifier = Modifier.padding(horizontal = 20.dp)
+                    .padding(top = 8.dp, bottom = 32.dp)
+            ) {
+                NavigationBar()
+            }
         }
-        composable("Add") {
-            AddScreen(navController)
-        }
+    ) { innerPadding ->
+
+        // Test different screens until navigation is set up
+
+        Home(modifier = Modifier.padding(innerPadding))
+        //Expenses(modifier = Modifier.padding(innerPadding))
+        //Add(modifier = Modifier.padding(innerPadding))
+        //SetBudget(modifier = Modifier.padding(innerPadding))
+        //Recurring(modifier = Modifier.padding(innerPadding))
+
+        /*
+        Settings(
+            modifier = Modifier.padding(innerPadding),
+            isDarkMode = isDarkMode,
+            onDarkModeChange = { isDarkMode = it }
+        )
+         */
     }
 }
 
-
-
-
-
-
-
+@Preview(showBackground = true)
+@Composable
+fun BudgetAppPreview() {
+    BudgetAppTheme(darkTheme = false) {
+        BudgetApp()
+    }
+}

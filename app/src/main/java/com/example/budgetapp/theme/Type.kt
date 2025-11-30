@@ -1,4 +1,4 @@
-package com.example.budgetapp.ui.theme
+package com.example.budgetapp.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
