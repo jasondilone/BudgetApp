@@ -33,4 +33,5 @@
     <string name="weekly">Weekly</string>
     <string name="set">Set</string>
     <string name="recurring_expenses">Recurring Expenses</string>
+    <string name="description">Description</string>
 </resources>

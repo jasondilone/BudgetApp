@@ -157,6 +157,34 @@ fun Add(modifier: Modifier = Modifier) {
             }
         }
 
+        // Description
+        Text(
+            text = stringResource(R.string.description),
+            fontSize = mediumFontSize,
+            modifier = Modifier.padding(horizontal = 10.dp)
+                .padding(bottom = 12.dp)
+        )
+
+        Surface(
+            modifier = Modifier.fillMaxWidth()
+                .padding(horizontal = 10.dp)
+                .padding(bottom = 10.dp)
+                .height(50.dp),
+            shape = RoundedCornerShape(roundDp),
+            color = MaterialTheme.colorScheme.primary,
+            border = BorderStroke(0.dp, MaterialTheme.colorScheme.secondary)
+        ) {
+            Row(
+                modifier = Modifier.padding(0.dp)
+                    .fillMaxWidth()
+                    .height(IntrinsicSize.Min)
+                    .align(Alignment.Start),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+
+            }
+        }
+
         // Category
         Text(
             text = stringResource(R.string.category),
