@@ -1,11 +1,15 @@
 package com.example.budgetapp
 
-import android.graphics.drawable.shapes.OvalShape
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.absoluteOffset
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -13,20 +17,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,143 +39,282 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import java.text.DecimalFormat
-
-import com.example.budgetapp.ui.theme.lightTealColor
-import com.example.budgetapp.ui.theme.TealColor
-import com.example.budgetapp.ui.BottomNavigationBar
-
-
-
+import androidx.navigation.compose.rememberNavController
+import com.example.budgetapp.theme.BudgetAppTheme
 
 @Composable
-fun AddScreen() {
+fun Add(modifier: Modifier = Modifier) {
+    var expandedType by remember { mutableStateOf(false) }
+    var expandedCategory by remember { mutableStateOf(false) }
+    var expandedCategorySelection by remember { mutableStateOf(false) }
+    var typeSelection by remember { mutableStateOf(R.string.expense) }
+    var amountInput by remember { mutableStateOf("") }
+    var isRecurring by remember { mutableStateOf(false) }
 
-    // selection will show "Expense" by default but can change to "Category"
-    var selection: String = "Expense"
-    var expanded by remember {mutableStateOf(false)}
-    var amountInput by remember {mutableStateOf("")}
-    Scaffold(
-        bottomBar = {BottomNavigationBar(2)}
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .padding(all = 8.dp)
-                .padding(innerPadding)
-                .fillMaxWidth()
+    Column(
+        modifier = modifier.fillMaxSize().padding(top = 25.dp)
+            .background(color = MaterialTheme.colorScheme.background),
+        verticalArrangement = Arrangement.Top
+    ) {
+
+        // Add Expense/Category
+        Text(
+            text = stringResource(R.string.add_expense_and_category),
+            fontSize = largeFontSize,
+            modifier = Modifier.padding(horizontal = 10.dp)
+        )
+
+        // Type Selection
+        Surface(
+            modifier = Modifier.fillMaxWidth().padding(10.dp),
+            shape = RoundedCornerShape(roundDp),
+            color = MaterialTheme.colorScheme.primary,
+            border = BorderStroke(0.dp, MaterialTheme.colorScheme.secondary)
         ) {
-            Surface(
-                shape = RoundedCornerShape(16.dp),
-                modifier = Modifier
-                    .width(430.dp)
-                    .height(100.dp)
-                    .absoluteOffset(0.dp, 50.dp),
-                color = lightTealColor,
-                border = BorderStroke(2.dp, Color.Black)
+            Row(
+                modifier = Modifier.padding(0.dp)
+                    .fillMaxWidth()
+                    .height(IntrinsicSize.Min),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = selection,
-                    fontSize = 40.sp,
-                    modifier = Modifier.padding(25.dp),
-                    textAlign = TextAlign.Center
-                )
-                IconButton(onClick = { expanded = true },
-                    modifier = Modifier.fillMaxWidth()
+
+                Row(
+                    modifier = Modifier.weight(1f),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+
+                    // Selection Column
+                    Column(
+                        modifier = Modifier.weight(1f),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = stringResource(R.string.expense),
+                            fontSize = mediumFontSize,
+                            color = MaterialTheme.colorScheme.tertiary,
+                            maxLines = 1,
+                            modifier = Modifier.padding(start = 8.dp)
+                        )
+                    }
+                }
+
+                // Dropdown
+                IconButton(
+                    onClick = { expandedCategory = true }
                 ) {
                     Icon(
                         imageVector = Icons.Filled.KeyboardArrowDown,
-                        contentDescription = "Dropdown arrow",
-                        modifier = Modifier
-                            .size(40.dp)
-                            .absoluteOffset(120.dp)
+                        contentDescription = null
                     )
                 }
                 DropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = {expanded = false},
+                    expanded = expandedCategory,
+                    onDismissRequest = { expandedCategory = false },
                     modifier = Modifier
                         .width(330.dp)
-                        .border(2.dp, Color.Black, RoundedCornerShape(16.dp))
-                        .background(lightTealColor, RoundedCornerShape(16.dp))
-                        .absoluteOffset(90.dp),
-                    offset = DpOffset(20.dp, 5.dp)
-
+                        .border(2.dp, Color.Black, RoundedCornerShape(roundDp))
+                        .background(MaterialTheme.colorScheme.tertiary, RoundedCornerShape(roundDp))
                 ) {
-                    DropdownMenuItem(
-                        onClick = {
-                            expanded = false;
-                            selection = "Expense"
-                        },
-                        text = {Text(stringResource(R.string.expense),
-                            fontSize = 30.sp
-                            )}
-                    )
-                    DropdownMenuItem(
-                        onClick = {expanded = false;
-                            selection = "Category"
-                                  },
-                        text = {Text(stringResource(R.string.category),
-                            fontSize = 30.sp
-                            )}
-                    )
+
                 }
             }
-            Text(
-                text = "Amount",
-                fontSize = 20.sp,
-                modifier = Modifier.absoluteOffset(50.dp, 190.dp)
-            )
-            TextField(
-                textStyle = TextStyle(
-                    fontSize = 40.sp
-                ),
-                leadingIcon = { Text("$", fontSize = 40.sp) },
-                //placeholder = { Text(stringResource(R.string.amount),
-                //    fontSize = 40.sp) },
-                value = amountInput,
-                onValueChange = { amountInput = it },
-                modifier = Modifier
-                    .width(300.dp)
-                    .height(100.dp)
-                    .absoluteOffset(35.dp, 200.dp)
-                    .border(2.dp, Color.Black, RoundedCornerShape(16.dp)),
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Number,
-                    imeAction = ImeAction.Next
-                ),
-                singleLine = true,
-                shape = RoundedCornerShape(16.dp)
-            )
-            Button(
-                onClick = {  },
-                modifier = Modifier
-                    .width(200.dp)
-                    .height(90.dp)
-                    .align(Alignment.CenterHorizontally)
-                    .absoluteOffset(0.dp, 370.dp),
-                colors = ButtonDefaults.buttonColors(TealColor, Color.White),
-                border = BorderStroke(2.dp, Color.Black)
+        }
+        Spacer(modifier = Modifier.height(80.dp))
+
+        // Amount
+        Text(
+            text = stringResource(R.string.amount),
+            fontSize = mediumFontSize,
+            modifier = Modifier.padding(horizontal = 10.dp)
+                .padding(bottom = 12.dp)
+        )
+
+        Surface(
+            modifier = Modifier.fillMaxWidth()
+                .padding(horizontal = 10.dp)
+                .padding(bottom = 10.dp)
+                .height(50.dp),
+            shape = RoundedCornerShape(roundDp),
+            color = MaterialTheme.colorScheme.primary,
+            border = BorderStroke(0.dp, MaterialTheme.colorScheme.secondary)
+        ) {
+            Row(
+                modifier = Modifier.padding(0.dp)
+                    .fillMaxWidth()
+                    .height(IntrinsicSize.Min)
+                    .align(Alignment.Start),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Add",
-                    fontSize = 40.sp
+                    text = stringResource(R.string.dollar_sign),
+                    fontSize = mediumFontSize,
+                    color = MaterialTheme.colorScheme.tertiary,
+                    maxLines = 1,
+                    modifier = Modifier.padding(horizontal = 20.dp)
+                )
+            }
+        }
+
+        // Description
+        Text(
+            text = stringResource(R.string.description),
+            fontSize = mediumFontSize,
+            modifier = Modifier.padding(horizontal = 10.dp)
+                .padding(bottom = 12.dp)
+        )
+
+        Surface(
+            modifier = Modifier.fillMaxWidth()
+                .padding(horizontal = 10.dp)
+                .padding(bottom = 10.dp)
+                .height(50.dp),
+            shape = RoundedCornerShape(roundDp),
+            color = MaterialTheme.colorScheme.primary,
+            border = BorderStroke(0.dp, MaterialTheme.colorScheme.secondary)
+        ) {
+            Row(
+                modifier = Modifier.padding(0.dp)
+                    .fillMaxWidth()
+                    .height(IntrinsicSize.Min)
+                    .align(Alignment.Start),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+
+            }
+        }
+
+        // Category
+        Text(
+            text = stringResource(R.string.category),
+            fontSize = mediumFontSize,
+            modifier = Modifier.padding(horizontal = 10.dp)
+        )
+
+        // Category Selection
+        Surface(
+            modifier = Modifier.fillMaxWidth().padding(10.dp),
+            shape = RoundedCornerShape(roundDp),
+            color = MaterialTheme.colorScheme.primary,
+            border = BorderStroke(0.dp, MaterialTheme.colorScheme.secondary)
+        ) {
+            Row(
+                modifier = Modifier.padding(0.dp)
+                    .fillMaxWidth()
+                    .height(IntrinsicSize.Min),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+
+                Row(
+                    modifier = Modifier.weight(1f),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+
+                    // Selection Column
+                    Column(
+                        modifier = Modifier.weight(1f),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = stringResource(R.string.other),
+                            fontSize = mediumFontSize,
+                            color = MaterialTheme.colorScheme.tertiary,
+                            maxLines = 1,
+                            modifier = Modifier.padding(start = 8.dp)
+                        )
+                    }
+                }
+
+                // Dropdown
+                IconButton(
+                    onClick = { expandedCategorySelection = true }
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.KeyboardArrowDown,
+                        contentDescription = null
+                    )
+                }
+                DropdownMenu(
+                    expanded = expandedCategorySelection,
+                    onDismissRequest = { expandedCategorySelection = false },
+                    modifier = Modifier
+                        .width(330.dp)
+                        .border(2.dp, MaterialTheme.colorScheme.onPrimary, RoundedCornerShape(roundDp))
+                        .background(MaterialTheme.colorScheme.tertiary, RoundedCornerShape(roundDp))
+                ) {
+
+                }
+            }
+        }
+
+        Row(
+            modifier = Modifier.fillMaxWidth()
+                .height(50.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(R.string.recurring),
+                fontSize = mediumFontSize,
+                modifier = Modifier.padding(horizontal = 10.dp)
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            Switch(
+                checked = isRecurring,
+                onCheckedChange = { isRecurring = it },
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .padding(horizontal = 20.dp),
+                colors = SwitchDefaults.colors(
+                    checkedThumbColor = MaterialTheme.colorScheme.primary,
+                    checkedTrackColor = MaterialTheme.colorScheme.secondary,
+                    uncheckedThumbColor = MaterialTheme.colorScheme.secondary,
+                    uncheckedTrackColor = MaterialTheme.colorScheme.primary,
+                    uncheckedBorderColor = MaterialTheme.colorScheme.secondary
+                )
+            )
+        }
+
+
+        Row(
+            modifier = Modifier.fillMaxWidth()
+                .padding(20.dp),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Button(
+                onClick = {  },
+                shape = RoundedCornerShape(64.dp),
+                modifier = Modifier.size(180.dp, 50.dp),
+                colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.secondary)
+            ) {
+                Text(
+                    text = stringResource(R.string.add),
+                    fontSize = mediumFontSize,
+                    color = MaterialTheme.colorScheme.onSecondary
                 )
             }
         }
     }
 }
 
-@Preview(showBackground = true)
+@Preview
 @Composable
 fun AddPreview() {
-    AddScreen()
+
+    BudgetAppTheme(false) {
+        Scaffold(
+            bottomBar = {
+                Box (
+                    modifier = Modifier.padding(horizontal = 20.dp)
+                        .padding(top = 8.dp, bottom = 32.dp)
+                ) {
+                    NavigationBarPreview()
+                }
+            }
+        ) { innerPadding ->
+            Add(modifier = Modifier.padding(innerPadding))
+        }
+    }
 }

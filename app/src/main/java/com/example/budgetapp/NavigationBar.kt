@@ -12,12 +12,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
-import androidx.compose.material.icons.filled.Receipt
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.List
-import androidx.compose.material.icons.outlined.Receipt
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -32,9 +30,10 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.example.budgetapp.theme.BudgetAppTheme
-
 @Composable //navigation functionality -----------------------------------------
 fun NavigationBar(navController: NavController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -83,7 +82,7 @@ fun NavIcon(
 
 // ui preview --------------------------------------------------
 @Composable
-fun NavigationBar() {
+fun NavigationBarPreview(navController: NavHostController) {
     var selectedIcon = remember { mutableStateOf(NavItem.Home) }
     Row(
         modifier = Modifier
@@ -92,9 +91,12 @@ fun NavigationBar() {
             .padding(10.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
+
         // Home Icon
         IconButton(
-            onClick = { selectedIcon.value = NavItem.Home },
+            onClick = {
+                selectedIcon.value = NavItem.Home
+            },
             modifier = Modifier
                 .background(
                     if (selectedIcon.value == NavItem.Home) MaterialTheme.colorScheme.secondary
@@ -103,14 +105,20 @@ fun NavigationBar() {
                 )
                 .size(50.dp)
         ) {
-            Icon(Icons.Outlined.Home, contentDescription = null, modifier = Modifier.size(30.dp),
+            Icon(
+                imageVector = Icons.Outlined.Home,
+                contentDescription = null,
+                modifier = Modifier.size(30.dp),
                 tint = if (selectedIcon.value == NavItem.Home) MaterialTheme.colorScheme.onSecondary
-                else MaterialTheme.colorScheme.onPrimary)
+                else MaterialTheme.colorScheme.onPrimary
+            )
         }
 
         // List Icon
         IconButton(
-            onClick = { selectedIcon.value = NavItem.Expenses },
+            onClick = {
+                selectedIcon.value = NavItem.Expenses
+            },
             modifier = Modifier
                 .background(
                     if (selectedIcon.value == NavItem.Expenses) MaterialTheme.colorScheme.secondary
@@ -119,14 +127,20 @@ fun NavigationBar() {
                 )
                 .size(50.dp)
         ) {
-            Icon(Icons.Outlined.List, contentDescription = null, modifier = Modifier.size(30.dp),
+            Icon(
+                imageVector = Icons.Outlined.List,
+                contentDescription = null,
+                modifier = Modifier.size(30.dp),
                 tint = if (selectedIcon.value == NavItem.Expenses) MaterialTheme.colorScheme.onSecondary
-                else MaterialTheme.colorScheme.onPrimary)
+                else MaterialTheme.colorScheme.onPrimary
+            )
         }
 
         // Add Icon
         IconButton(
-            onClick = { selectedIcon.value = NavItem.Add },
+            onClick = {
+                selectedIcon.value = NavItem.Add
+            },
             modifier = Modifier
                 .background(
                     if (selectedIcon.value == NavItem.Add) MaterialTheme.colorScheme.secondary
@@ -135,14 +149,20 @@ fun NavigationBar() {
                 )
                 .size(50.dp)
         ) {
-            Icon(Icons.Outlined.Add, contentDescription = null, modifier = Modifier.size(30.dp),
+            Icon(
+                imageVector = Icons.Outlined.Add,
+                contentDescription = null,
+                modifier = Modifier.size(30.dp),
                 tint = if (selectedIcon.value == NavItem.Add) MaterialTheme.colorScheme.onSecondary
-                else MaterialTheme.colorScheme.onPrimary)
+                else MaterialTheme.colorScheme.onPrimary
+            )
         }
 
         // Settings Icon
         IconButton(
-            onClick = { selectedIcon.value = NavItem.Settings },
+            onClick = {
+                selectedIcon.value = NavItem.Settings
+            },
             modifier = Modifier
                 .background(
                     if (selectedIcon.value == NavItem.Settings) MaterialTheme.colorScheme.secondary
@@ -151,9 +171,13 @@ fun NavigationBar() {
                 )
                 .size(50.dp)
         ) {
-            Icon(Icons.Outlined.Settings, contentDescription = null, modifier = Modifier.size(30.dp),
+            Icon(
+                imageVector = Icons.Outlined.Settings,
+                contentDescription = null,
+                modifier = Modifier.size(30.dp),
                 tint = if (selectedIcon.value == NavItem.Settings) MaterialTheme.colorScheme.onSecondary
-                else MaterialTheme.colorScheme.onPrimary)
+                else MaterialTheme.colorScheme.onPrimary
+            )
         }
     }
 }
@@ -162,6 +186,6 @@ fun NavigationBar() {
 @Composable
 fun NavigationBarPreview() {
     BudgetAppTheme(true) {
-        NavigationBar()
+        NavigationBarPreview()
     }
 }

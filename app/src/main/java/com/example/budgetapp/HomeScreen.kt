@@ -1,6 +1,5 @@
 package com.example.budgetapp
 
-import androidx.appcompat.app.AlertDialog
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -38,10 +37,8 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -57,64 +54,64 @@ import java.time.LocalDate
 @Composable
 fun Home(modifier: Modifier = Modifier, spent: Double, budget: Int) {
     // budget button
-    var budget by remember { mutableStateOf(500.0) } //<--- deefault budg va l
+    var budget by remember { mutableStateOf(500.0) } //<--- deefault budg val
     var showBudgetDialog by remember { mutableStateOf(false) }
     var newBudgetText by remember { mutableStateOf("") }
-
     // for ring's dark mode colors
+
     val materialPrimary = MaterialTheme.colorScheme.primary
     val materialBackground = MaterialTheme.colorScheme.background
     val materialSecondary = MaterialTheme.colorScheme.secondary
 
     // Sample Data
     val expenses = remember {
-        mutableStateListOf<Expense>(
-        Expense("Food",
-            "deli",
-            26.02,
-            LocalDate.now(),
-            false
-        ),
-        Expense("Subscription",
-            "Prime",
-            11.10,
-            LocalDate.now(),
-            true
-        ),
-        Expense("Shopping",
-            "Amazon",
-            39.99,
-            LocalDate.now(),
-            false
-        ),
-        Expense("Shopping",
-            "Best Buy",
-            67.23,
-            LocalDate.now(),
-            false
-        ),
-        Expense("Food",
-            "Restaurant",
-            80.17,
-            LocalDate.now(),
-            false
-        ),
-        Expense("Bills",
-            "insurance",
-            193.88,
-            LocalDate.now(),
-            true
-        ),
-        Expense("Subscription",
-            "Spotify",
-            15.00,
-            LocalDate.now(),
-            true
-        )
-    ) }
+        mutableListOf<Expense>(
+            Expense("Food",
+                "deli",
+                26.02,
+                LocalDate.now(),
+                false
+            ),
+            Expense("Subscription",
+                "Prime",
+                11.10,
+                LocalDate.now(),
+                true
+            ),
+            Expense("Shopping",
+                "Amazon",
+                39.99,
+                LocalDate.now(),
+                false
+            ),
+            Expense("Shopping",
+                "Best Buy",
+                67.23,
+                LocalDate.now(),
+                false
+            ),
+            Expense("Food",
+                "Restaurant",
+                80.17,
+                LocalDate.now(),
+                false
+            ),
+            Expense("Bills",
+                "insurance",
+                193.88,
+                LocalDate.now(),
+                true
+            ),
+            Expense("Subscription",
+                "Spotify",
+                15.00,
+                LocalDate.now(),
+                true
+            )
+        ) }
 
-    var spentPercentage = ((spent / budget) * 100).toInt()
-    var ringPercent: Float = ((spent / budget) * 360).toFloat()
+    var spentPercentage = ((spent /budget) * 100).toInt()
+    var ringPercent: Float = ((spent /budget) * 360).toFloat()
     var percentColor = when (spentPercentage) {
         in 0..79 -> MaterialTheme.colorScheme.onBackground
         in 80..99 -> orangeColor
@@ -247,6 +244,7 @@ fun Home(modifier: Modifier = Modifier, spent: Double, budget: Int) {
                     .padding(bottom = 12.dp)
             )
         }
+
         //added swipe to delete to new ui
         LazyColumn(
             modifier = Modifier.padding(0.dp),
@@ -334,9 +332,7 @@ fun Home(modifier: Modifier = Modifier, spent: Double, budget: Int) {
             }
         )
     }
-
 }
-
 
 @Preview(showBackground = true)
 @Composable
@@ -349,13 +345,14 @@ fun HomePreview() {
                         .padding(horizontal = 20.dp)
                         .padding(top = 8.dp, bottom = 32.dp)
                 ) {
-                    NavigationBar()
+                    NavigationBarPreview()
                 }
             }
         ) { innerPadding ->
-            Home(modifier = Modifier.padding(innerPadding),
-                spent = spent,
-                budget = budget
+            Home(
+                modifier = Modifier.padding(innerPadding),
+                budget = budget,
+                spent = spent
             )
         }
     }
