@@ -9,6 +9,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.List
@@ -17,16 +21,68 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.example.budgetapp.theme.BudgetAppTheme
+@Composable //navigation functionality -----------------------------------------
+fun NavigationBar(navController: NavController) {
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
 
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(color = MaterialTheme.colorScheme.primary, RoundedCornerShape(roundDp))
+            .padding(10.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
+        NavIcon(Icons.Default.Home, "home", currentRoute, navController)
+        NavIcon(Icons.Default.List, "expenses", currentRoute, navController)
+        NavIcon(Icons.Default.Add, "add", currentRoute, navController)
+        NavIcon(Icons.Default.Settings, "settings", currentRoute, navController)
+    }
+}
 @Composable
-fun NavigationBar() {
+fun NavIcon(
+    icon: ImageVector,
+    route: String,
+    currentRoute: String?,
+    navController: NavController
+) {
+    val isSelected = currentRoute == route
+
+    IconButton(
+        onClick = { if (!isSelected) navController.navigate(route) },
+        modifier = Modifier
+            .background(
+                if (isSelected) MaterialTheme.colorScheme.secondary else Color.Transparent,
+                CircleShape
+            )
+            .size(50.dp)
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = route,
+            modifier = Modifier.size(30.dp),
+            tint = if (isSelected) MaterialTheme.colorScheme.onSecondary
+            else MaterialTheme.colorScheme.onPrimary
+        )
+    }
+}
+
+// ui preview --------------------------------------------------
+@Composable
+fun NavigationBarPreview(navController: NavHostController) {
     var selectedIcon = remember { mutableStateOf(NavItem.Home) }
     Row(
         modifier = Modifier
@@ -130,6 +186,6 @@ fun NavigationBar() {
 @Composable
 fun NavigationBarPreview() {
     BudgetAppTheme(true) {
-        NavigationBar()
+        NavigationBarPreview()
     }
 }

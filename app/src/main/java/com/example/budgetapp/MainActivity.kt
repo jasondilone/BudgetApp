@@ -18,6 +18,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.budgetapp.theme.BudgetAppTheme
 //import com.example.com.example.budgetapp.BudgetAppTheme
 import java.text.DecimalFormat
@@ -55,36 +58,48 @@ var budget = 1000
 @Composable
 fun BudgetApp() {
     var isDarkMode by remember { mutableStateOf(false) }
+    val navController = rememberNavController()
 
     Scaffold(
         bottomBar = {
-            Box (
-                modifier = Modifier.padding(horizontal = 20.dp)
+            Box(
+                modifier = Modifier
+                    .padding(horizontal = 20.dp)
                     .padding(top = 8.dp, bottom = 32.dp)
             ) {
-                NavigationBar()
+                NavigationBar(navController)
             }
         }
     ) { innerPadding ->
 
-        // Test different screens until navigation is set up
-
-        Home(modifier = Modifier.padding(innerPadding))
-        //Expenses(modifier = Modifier.padding(innerPadding))
-        //Add(modifier = Modifier.padding(innerPadding))
-        //SetBudget(modifier = Modifier.padding(innerPadding))
-        //Recurring(modifier = Modifier.padding(innerPadding))
-
-        /*
-        Settings(
-            modifier = Modifier.padding(innerPadding),
-            isDarkMode = isDarkMode,
-            onDarkModeChange = { isDarkMode = it }
-        )
-         */
+        NavHost(
+            navController = navController,
+            startDestination = "home",
+            modifier = Modifier.padding()
+        ) {
+            composable("home") {
+                Home(
+                    modifier = Modifier.padding(innerPadding),
+                    spent = spent,
+                    budget = budget
+                )
+            }
+            composable("expenses") {
+                Expenses(modifier = Modifier.padding(innerPadding))
+            }
+            composable("add") {
+                Add(modifier = Modifier.padding(innerPadding))
+            }
+            composable("settings") {
+                Settings(
+                    modifier = Modifier.padding(innerPadding),
+                    isDarkMode = isDarkMode,
+                    onDarkModeChange = { isDarkMode = it }
+                )
+            }
+        }
     }
 }
-
 @Preview(showBackground = true)
 @Composable
 fun BudgetAppPreview() {
