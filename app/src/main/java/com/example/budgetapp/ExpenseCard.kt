@@ -90,14 +90,5 @@ fun ExpenseCard(expense: Expense) {
 @Composable
 fun ExpenseCardPreview() {
     BudgetAppTheme(darkTheme = true) {
-        // Example expense
-        val myExpense = Expense(
-            "Subscriptions 🔁",
-            "Hulu",
-            15.10,
-            LocalDate.now(),
-            true
-        )
-        ExpenseCard(myExpense)
     }
 }

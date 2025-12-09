@@ -48,12 +48,21 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.budgetapp.theme.BudgetAppTheme
 import com.example.budgetapp.theme.orangeColor
 import java.time.LocalDate
+import androidx.compose.runtime.collectAsState
+import com.example.budgetapp.ExpensesViewModel
+
 
 @Composable
-fun Home(modifier: Modifier = Modifier, spent: Double, budget: Int) {
+fun Home(
+    modifier: Modifier = Modifier,
+    viewModel: ExpensesViewModel,
+    budget: Double = 500.0
+) {
+
     // budget button
     var budget by remember { mutableStateOf(500.0) } //<--- deefault budg val
     var showBudgetDialog by remember { mutableStateOf(false) }
@@ -64,52 +73,8 @@ fun Home(modifier: Modifier = Modifier, spent: Double, budget: Int) {
     val materialBackground = MaterialTheme.colorScheme.background
     val materialSecondary = MaterialTheme.colorScheme.secondary
 
-    // Sample Data
-    val expenses = remember {
-        mutableListOf<Expense>(
-            Expense("Food",
-                "deli",
-                26.02,
-                LocalDate.now(),
-                false
-            ),
-            Expense("Subscription",
-                "Prime",
-                11.10,
-                LocalDate.now(),
-                true
-            ),
-            Expense("Shopping",
-                "Amazon",
-                39.99,
-                LocalDate.now(),
-                false
-            ),
-            Expense("Shopping",
-                "Best Buy",
-                67.23,
-                LocalDate.now(),
-                false
-            ),
-            Expense("Food",
-                "Restaurant",
-                80.17,
-                LocalDate.now(),
-                false
-            ),
-            Expense("Bills",
-                "insurance",
-                193.88,
-                LocalDate.now(),
-                true
-            ),
-            Expense("Subscription",
-                "Spotify",
-                15.00,
-                LocalDate.now(),
-                true
-            )
-        ) }
+    val expenses by viewModel.allExpenses.collectAsState(initial = emptyList())
+    val spent = expenses.sumOf { it.amount }
 
     var spentPercentage = ((spent /budget) * 100).toInt()
     var ringPercent: Float = ((spent /budget) * 360).toFloat()
@@ -271,7 +236,7 @@ fun Home(modifier: Modifier = Modifier, spent: Double, budget: Int) {
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             // DELETE
-                            IconButton(onClick = { expenses.remove(expense) }) {
+                            IconButton(onClick = { viewModel.deleteExpense(expense) }) {
                                 Icon(
                                     imageVector = Icons.Default.Close,
                                     contentDescription = "Delete",
@@ -334,7 +299,7 @@ fun Home(modifier: Modifier = Modifier, spent: Double, budget: Int) {
         )
     }
 }
-
+/*
 @Preview(showBackground = true)
 @Composable
 fun HomePreview() {
@@ -358,3 +323,7 @@ fun HomePreview() {
         }
     }
 }
+
+
+ */
+

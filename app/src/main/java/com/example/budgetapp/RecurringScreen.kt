@@ -17,38 +17,30 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.rememberNavController
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.budgetapp.theme.BudgetAppTheme
 import java.time.LocalDate
+import com.example.budgetapp.Expense
+
 
 @Composable
-fun Recurring(modifier: Modifier = Modifier) {
-    val expenses = listOf<Expense>(
-        Expense("Subscription",
-            "DoorDash",
-            10.99,
-            LocalDate.now(),
-            true
-        ),
-        Expense("Subscription",
-            "Disney+",
-            5.99,
-            LocalDate.now(),
-            true
-        ),
-        Expense("Bills",
-            "T-Mobile",
-            66.89,
-            LocalDate.now(),
-            true
-        )
-    )
+fun Recurring(
+    modifier: Modifier = Modifier,
+    viewModel: ExpensesViewModel
+) {
+    val expenses by viewModel.allExpenses.collectAsState(initial = emptyList())
+    val recurringExpenses = expenses.filter { it.isRecurring }
+
+
 
     Column(
         modifier = modifier.fillMaxSize().padding(top = 25.dp),
@@ -80,7 +72,7 @@ fun Recurring(modifier: Modifier = Modifier) {
         }
     }
 }
-
+/*
 @Preview
 @Composable
 fun RecurringPreview() {
@@ -99,3 +91,5 @@ fun RecurringPreview() {
         }
     }
 }
+
+ */

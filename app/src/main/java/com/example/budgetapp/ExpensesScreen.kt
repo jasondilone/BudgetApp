@@ -29,8 +29,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -40,80 +40,39 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.rememberNavController
 import com.example.budgetapp.theme.BudgetAppTheme
 import java.time.LocalDate
 
 @Composable
-fun Expenses(modifier: Modifier = Modifier) {
+fun Expenses(
+    modifier: Modifier = Modifier,
+    viewModel: ExpensesViewModel
+) {
     var expandedCategory by remember { mutableStateOf(false) }
     var expandedTime by remember { mutableStateOf(false) }
 
     var selectedCategory by remember { mutableStateOf("All") }
     var selectedTime by remember { mutableStateOf("This Month") }
 
-    // Sample Data
-    val expenses = remember {
-        mutableStateListOf(
+    val expenses by viewModel.allExpenses.collectAsState(initial = emptyList())
 
-        Expense("Food",
-            "",
-            26.02,
-            LocalDate.now(),
-            false
-        ),
-        Expense(
-            "Subscription",
-            "YouTube Premium",
-            11.10,
-            LocalDate.now(),
-            true
-        ),
-        Expense("Shopping",
-            "Target",
-            39.99,
-            LocalDate.now(),
-            false
-        ),
-        Expense("Shopping",
-            "Amazon",
-            67.23,
-            LocalDate.now(),
-            false
-        ),
-        Expense("Food",
-            "Restaurant",
-            80.17,
-            LocalDate.now(),
-            false
-        ),
-        Expense("Bills",
-            "insurance",
-            193.88,
-            LocalDate.now(),
-            true
-        ),
-        Expense("Subscription",
-            "Spotify",
-            15.00,
-            LocalDate.now(),
-            true
-        ),
-    )
-}
     val filteredExpenses = expenses.filter { expense ->
         val categoryMatch = (selectedCategory == "All" || expense.category == selectedCategory)
 
         val timeMatch = when (selectedTime) {
-            "This Month" -> expense.date.month == LocalDate.now().month &&
-                    expense.date.year == LocalDate.now().year
-
+            "This Month" -> {
+                val expenseDate = LocalDate.parse(expense.date)
+                expenseDate.month == LocalDate.now().month &&
+                        expenseDate.year == LocalDate.now().year
+            }
             "This Week" -> {
+                val expenseDate = LocalDate.parse(expense.date)
                 val now = LocalDate.now()
                 val startOfWeek = now.with(java.time.DayOfWeek.MONDAY)
                 val endOfWeek = now.with(java.time.DayOfWeek.SUNDAY)
-                !expense.date.isBefore(startOfWeek) && !expense.date.isAfter(endOfWeek)
+                !expenseDate.isBefore(startOfWeek) && !expenseDate.isAfter(endOfWeek)
             }
+
 
             else -> true // "All Time"
         }
@@ -141,8 +100,7 @@ fun Expenses(modifier: Modifier = Modifier) {
             Box(
                 modifier = Modifier
                     .clickable {
-                        expenses.clear()
-                        spent = 0.0
+                        viewModel.clearAllExpenses()
                     }
             ) {
                 Text(
@@ -324,7 +282,7 @@ fun Expenses(modifier: Modifier = Modifier) {
 
     }
 }
-
+/*
 @Preview
 @Composable
 fun ExpensesPreview() {
@@ -343,3 +301,5 @@ fun ExpensesPreview() {
         }
     }
 }
+
+ */

@@ -24,6 +24,8 @@ import androidx.navigation.compose.rememberNavController
 import com.example.budgetapp.theme.BudgetAppTheme
 //import com.example.com.example.budgetapp.BudgetAppTheme
 import java.text.DecimalFormat
+import androidx.lifecycle.viewmodel.compose.viewModel
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -78,14 +80,19 @@ fun BudgetApp() {
             modifier = Modifier.padding()
         ) {
             composable("home") {
+                val expensesViewModel: ExpensesViewModel = viewModel()
                 Home(
                     modifier = Modifier.padding(innerPadding),
-                    spent = spent,
-                    budget = budget
+                    viewModel = expensesViewModel,
+                    budget = 1000.0
                 )
             }
             composable("expenses") {
-                Expenses(modifier = Modifier.padding(innerPadding))
+                val expensesViewModel: ExpensesViewModel = viewModel()
+                Expenses(
+                    modifier = Modifier.padding(innerPadding),
+                    viewModel = expensesViewModel
+                )
             }
             composable("add") {
                 Add(modifier = Modifier.padding(innerPadding))
@@ -98,6 +105,7 @@ fun BudgetApp() {
                 )
             }
         }
+
     }
 }
 @Preview(showBackground = true)
