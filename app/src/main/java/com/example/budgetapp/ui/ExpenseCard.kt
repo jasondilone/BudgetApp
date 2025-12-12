@@ -1,4 +1,4 @@
-package com.example.budgetapp
+package com.example.budgetapp.ui
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -9,17 +9,20 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.budgetapp.data.Expense
+import com.example.budgetapp.centsNumberFormatter
+import com.example.budgetapp.largeFontSize
+import com.example.budgetapp.mediumFontSize
+import com.example.budgetapp.smallFontSize
 import com.example.budgetapp.theme.BudgetAppTheme
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -92,11 +95,12 @@ fun ExpenseCardPreview() {
     BudgetAppTheme(darkTheme = true) {
         // Example expense
         val myExpense = Expense(
-            "Subscriptions 🔁",
-            "Hulu",
-            15.10,
+            100,
+            "food",
+            "trader joes",
+            15.39,
             LocalDate.now(),
-            true
+            false
         )
         ExpenseCard(myExpense)
     }

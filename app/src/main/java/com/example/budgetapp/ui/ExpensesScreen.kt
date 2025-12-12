@@ -1,4 +1,4 @@
-package com.example.budgetapp
+package com.example.budgetapp.ui
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -38,10 +38,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.rememberNavController
+import com.example.budgetapp.data.Expense
+import com.example.budgetapp.R
+import com.example.budgetapp.largeFontSize
+import com.example.budgetapp.mediumFontSize
+import com.example.budgetapp.roundDp
+import com.example.budgetapp.smallFontSize
 import com.example.budgetapp.theme.BudgetAppTheme
+import java.time.DayOfWeek
 import java.time.LocalDate
 
 @Composable
@@ -51,56 +58,10 @@ fun Expenses(modifier: Modifier = Modifier) {
 
     var selectedCategory by remember { mutableStateOf("All") }
     var selectedTime by remember { mutableStateOf("This Month") }
-
-    // Sample Data
-    val expenses = remember {
-        mutableStateListOf(
-
-        Expense("Food",
-            "",
-            26.02,
-            LocalDate.now(),
-            false
-        ),
-        Expense(
-            "Subscription",
-            "YouTube Premium",
-            11.10,
-            LocalDate.now(),
-            true
-        ),
-        Expense("Shopping",
-            "Target",
-            39.99,
-            LocalDate.now(),
-            false
-        ),
-        Expense("Shopping",
-            "Amazon",
-            67.23,
-            LocalDate.now(),
-            false
-        ),
-        Expense("Food",
-            "Restaurant",
-            80.17,
-            LocalDate.now(),
-            false
-        ),
-        Expense("Bills",
-            "insurance",
-            193.88,
-            LocalDate.now(),
-            true
-        ),
-        Expense("Subscription",
-            "Spotify",
-            15.00,
-            LocalDate.now(),
-            true
-        ),
+    var expenses = listOf<Expense>(
+        // Don't need sample data, use real data
     )
-}
+
     val filteredExpenses = expenses.filter { expense ->
         val categoryMatch = (selectedCategory == "All" || expense.category == selectedCategory)
 
@@ -110,14 +71,12 @@ fun Expenses(modifier: Modifier = Modifier) {
 
             "This Week" -> {
                 val now = LocalDate.now()
-                val startOfWeek = now.with(java.time.DayOfWeek.MONDAY)
-                val endOfWeek = now.with(java.time.DayOfWeek.SUNDAY)
+                val startOfWeek = now.with(DayOfWeek.MONDAY)
+                val endOfWeek = now.with(DayOfWeek.SUNDAY)
                 !expense.date.isBefore(startOfWeek) && !expense.date.isAfter(endOfWeek)
             }
-
             else -> true // "All Time"
         }
-
         categoryMatch && timeMatch
     }
 
@@ -141,8 +100,7 @@ fun Expenses(modifier: Modifier = Modifier) {
             Box(
                 modifier = Modifier
                     .clickable {
-                        expenses.clear()
-                        spent = 0.0
+
                     }
             ) {
                 Text(
@@ -160,6 +118,8 @@ fun Expenses(modifier: Modifier = Modifier) {
             }
         }
 
+        // sample categories
+        val categories = listOf("All", "Food", "Transportation", "Entertainment", "Other")
         // Category selection
         Surface(
             modifier = Modifier.fillMaxWidth().padding(10.dp),
@@ -174,19 +134,17 @@ fun Expenses(modifier: Modifier = Modifier) {
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-
                 Row(
                     modifier = Modifier.weight(1f),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-
                     // Selection Column
                     Column(
                         modifier = Modifier.weight(1f),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = stringResource(R.string.all_categories),
+                            text = selectedCategory,
                             fontSize = mediumFontSize,
                             color = MaterialTheme.colorScheme.tertiary,
                             maxLines = 1,
@@ -203,16 +161,32 @@ fun Expenses(modifier: Modifier = Modifier) {
                         contentDescription = null
                     )
                 }
-
                 DropdownMenu(
                     expanded = expandedCategory,
                     onDismissRequest = { expandedCategory = false },
                     modifier = Modifier
-                        .width(330.dp)
-                        .border(2.dp, Color.Black, RoundedCornerShape(roundDp))
-                        .background(MaterialTheme.colorScheme.tertiary, RoundedCornerShape(roundDp))
+                        .width(370.dp)
+                        .border(0.dp, MaterialTheme.colorScheme.onPrimary, RoundedCornerShape(roundDp)),
+                    containerColor = MaterialTheme.colorScheme.secondary,
+                    shape = RoundedCornerShape(roundDp)
                 ) {
-
+                    categories.forEach { category ->
+                        DropdownMenuItem(
+                            text = {
+                                Text(
+                                    text = category,
+                                    color = MaterialTheme.colorScheme.onTertiary,
+                                    fontSize = mediumFontSize,
+                                    modifier = Modifier.fillMaxWidth(),
+                                    textAlign = TextAlign.Center
+                                )
+                            },
+                            onClick = {
+                                selectedCategory = category
+                                expandedCategory = false
+                            }
+                        )
+                    }
                 }
             }
         }
@@ -244,7 +218,7 @@ fun Expenses(modifier: Modifier = Modifier) {
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = stringResource(R.string.this_month),
+                            text = selectedTime,
                             fontSize = mediumFontSize,
                             color = MaterialTheme.colorScheme.tertiary,
                             maxLines = 1,
@@ -262,17 +236,18 @@ fun Expenses(modifier: Modifier = Modifier) {
                     )
                 }
 
+                /*
                 DropdownMenu(
                     expanded = expandedTime,
                     onDismissRequest = { expandedTime = false },
                     modifier = Modifier
                         .width(330.dp)
-                        .border(2.dp, Color.Black, RoundedCornerShape(roundDp))
+                        .border(0.dp, Color.Black, RoundedCornerShape(roundDp))
                         .background(MaterialTheme.colorScheme.tertiary, RoundedCornerShape(roundDp))
                 ) {
                     //ALL CATEGORIES DROPDOWN LIST
-                    val categories = listOf("All", "Food", "Shopping", "Bills", "Subscription")
-
+                    //val categories = listOf("All", "Food", "Shopping", "Bills", "Subscription")
+                    /*
                     DropdownMenu(
                         expanded = expandedCategory,
                         onDismissRequest = { expandedCategory = false }
@@ -292,16 +267,33 @@ fun Expenses(modifier: Modifier = Modifier) {
                             )
                         }
                     }
+                    */
+
+
+                 */
                     //TIME SPAN DROPDOWN LIST
                     val timeSpans = listOf("This Month", "This Week", "All Time")
 
                     DropdownMenu(
                         expanded = expandedTime,
-                        onDismissRequest = { expandedTime = false }
+                        onDismissRequest = { expandedTime = false },
+                        modifier = Modifier
+                            .width(370.dp)
+                            .border(0.dp, MaterialTheme.colorScheme.tertiary, RoundedCornerShape(roundDp)),
+                        containerColor = MaterialTheme.colorScheme.secondary,
+                        shape = RoundedCornerShape(roundDp)
                     ) {
                         timeSpans.forEach { span ->
                             DropdownMenuItem(
-                                text = { Text(span) },
+                                text = {
+                                    Text(
+                                        span,
+                                        color = MaterialTheme.colorScheme.onTertiary,
+                                        fontSize = mediumFontSize,
+                                        modifier = Modifier.fillMaxWidth(),
+                                        textAlign = TextAlign.Center
+                                    )
+                                       },
                                 onClick = {
                                     selectedTime = span
                                     expandedTime = false
@@ -309,15 +301,14 @@ fun Expenses(modifier: Modifier = Modifier) {
                             )
                         }
                     }
-                }
             }
         }
 
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(0.dp)
         ) {
-            items(expenses) { expense ->
-                ExpenseCard(expense = expense)
+            items(0) { expense ->
+                //ExpenseCard(expense = expense)
             }
         }
 
@@ -335,7 +326,7 @@ fun ExpensesPreview() {
                     modifier = Modifier.padding(horizontal = 20.dp)
                         .padding(top = 8.dp, bottom = 32.dp)
                 ) {
-                    NavigationBarPreview()
+                    //NavigationBarPreview()
                 }
             }
         ) { innerPadding ->

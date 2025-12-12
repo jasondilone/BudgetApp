@@ -1,4 +1,4 @@
-package com.example.budgetapp
+package com.example.budgetapp.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
+import com.example.budgetapp.roundDp
 import com.example.budgetapp.theme.BudgetAppTheme
 @Composable //navigation functionality -----------------------------------------
 fun NavigationBar(navController: NavController) {

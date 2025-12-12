@@ -1,4 +1,4 @@
-package com.example.budgetapp
+package com.example.budgetapp.ui
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -23,26 +23,34 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.rememberNavController
+import com.example.budgetapp.data.Expense
+import com.example.budgetapp.R
+import com.example.budgetapp.largeFontSize
 import com.example.budgetapp.theme.BudgetAppTheme
 import java.time.LocalDate
 
 @Composable
 fun Recurring(modifier: Modifier = Modifier) {
     val expenses = listOf<Expense>(
-        Expense("Subscription",
+        Expense(
+            60,
+            "Subscription",
             "DoorDash",
             10.99,
             LocalDate.now(),
             true
         ),
-        Expense("Subscription",
+        Expense(
+            61,
+            "Subscription",
             "Disney+",
             5.99,
             LocalDate.now(),
             true
         ),
-        Expense("Bills",
+        Expense(
+            62,
+            "Bills",
             "T-Mobile",
             66.89,
             LocalDate.now(),

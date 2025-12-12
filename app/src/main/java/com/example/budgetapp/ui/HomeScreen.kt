@@ -1,4 +1,4 @@
-package com.example.budgetapp
+package com.example.budgetapp.ui
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
@@ -48,12 +48,19 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.budgetapp.data.Expense
+import com.example.budgetapp.R
+import com.example.budgetapp.centsNumberFormatter
+import com.example.budgetapp.largeFontSize
+import com.example.budgetapp.mediumFontSize
+import com.example.budgetapp.noCentsNumberFormatter
+import com.example.budgetapp.roundDp
 import com.example.budgetapp.theme.BudgetAppTheme
 import com.example.budgetapp.theme.orangeColor
 import java.time.LocalDate
 
 @Composable
-fun Home(modifier: Modifier = Modifier, spent: Double, budget: Int) {
+fun Home(modifier: Modifier = Modifier) {
     // budget button
     var budget by remember { mutableStateOf(500.0) } //<--- deefault budg val
     var showBudgetDialog by remember { mutableStateOf(false) }
@@ -64,55 +71,8 @@ fun Home(modifier: Modifier = Modifier, spent: Double, budget: Int) {
     val materialBackground = MaterialTheme.colorScheme.background
     val materialSecondary = MaterialTheme.colorScheme.secondary
 
-    // Sample Data
-    val expenses = remember {
-        mutableListOf<Expense>(
-            Expense("Food",
-                "deli",
-                26.02,
-                LocalDate.now(),
-                false
-            ),
-            Expense("Subscription",
-                "Prime",
-                11.10,
-                LocalDate.now(),
-                true
-            ),
-            Expense("Shopping",
-                "Amazon",
-                39.99,
-                LocalDate.now(),
-                false
-            ),
-            Expense("Shopping",
-                "Best Buy",
-                67.23,
-                LocalDate.now(),
-                false
-            ),
-            Expense("Food",
-                "Restaurant",
-                80.17,
-                LocalDate.now(),
-                false
-            ),
-            Expense("Bills",
-                "insurance",
-                193.88,
-                LocalDate.now(),
-                true
-            ),
-            Expense("Subscription",
-                "Spotify",
-                15.00,
-                LocalDate.now(),
-                true
-            )
-        ) }
-
-    var spentPercentage = ((spent /budget) * 100).toInt()
-    var ringPercent: Float = ((spent /budget) * 360).toFloat()
+    var spentPercentage = ((100.0 /budget) * 100).toInt()
+    var ringPercent: Float = ((100.0 /budget) * 360).toFloat()
     var percentColor = when (spentPercentage) {
         in 0..79 -> MaterialTheme.colorScheme.onBackground
         in 80..99 -> orangeColor
@@ -157,7 +117,7 @@ fun Home(modifier: Modifier = Modifier, spent: Double, budget: Int) {
                         color = MaterialTheme.colorScheme.primary
                     )
                     Text(
-                        text = "$" + centsNumberFormatter.format(spent),
+                        text = "$" + centsNumberFormatter.format(100.0),
                         fontSize = mediumFontSize,
                         maxLines = 1,
                         color = MaterialTheme.colorScheme.onSecondary
@@ -251,7 +211,7 @@ fun Home(modifier: Modifier = Modifier, spent: Double, budget: Int) {
             modifier = Modifier.padding(0.dp),
             verticalArrangement = Arrangement.spacedBy(0.dp)
         ) {
-            items(expenses, key = { it.hashCode() }) { expense ->
+            items(0, key = { it.hashCode() }) { expense ->
                 val dismissState = rememberSwipeToDismissBoxState(
                     confirmValueChange = { value ->
                         value != SwipeToDismissBoxValue.Settled
@@ -271,7 +231,7 @@ fun Home(modifier: Modifier = Modifier, spent: Double, budget: Int) {
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             // DELETE
-                            IconButton(onClick = { expenses.remove(expense) }) {
+                            IconButton(onClick = {  }) {
                                 Icon(
                                     imageVector = Icons.Default.Close,
                                     contentDescription = "Delete",
@@ -292,7 +252,7 @@ fun Home(modifier: Modifier = Modifier, spent: Double, budget: Int) {
                         }
                     },
                     content = {
-                        ExpenseCard(expense = expense)
+                        //ExpenseCard(expense = expense)
                     }
                 )
             }
@@ -346,14 +306,12 @@ fun HomePreview() {
                         .padding(horizontal = 20.dp)
                         .padding(top = 8.dp, bottom = 32.dp)
                 ) {
-                    NavigationBarPreview()
+                    //NavigationBarPreview()
                 }
             }
         ) { innerPadding ->
             Home(
-                modifier = Modifier.padding(innerPadding),
-                budget = budget,
-                spent = spent
+                modifier = Modifier.padding(innerPadding)
             )
         }
     }
