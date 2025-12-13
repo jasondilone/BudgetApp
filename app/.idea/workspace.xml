@@ -4,15 +4,7 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-    <list default="true" id="b5828162-123d-4421-b858-c362c4bf934b" name="Changes" comment="" />
-=======
-    <list default="true" id="1ffbf137-9d76-4f2f-974e-8e7243448c9e" name="Changes" comment="" />
->>>>>>> Stashed changes
-=======
-    <list default="true" id="f8edce29-a8f3-44d6-8f39-7ee81d2fd47e" name="Changes" comment="" />
->>>>>>> Stashed changes
+    <list default="true" id="70e87d1e-2356-41b0-80e2-fd9e4cf5b7d8" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -36,30 +28,11 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
   <component name="ProjectColorInfo">{
-  &quot;associatedIndex&quot;: 0
 }</component>
-  <component name="ProjectId" id="36lyu0D9t0Tj4YUv4AebEqxKEzZ" />
   <component name="ProjectReloadState">
     <option name="STATE" value="1" />
   </component>
-=======
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 2
-}]]></component>
-  <component name="ProjectId" id="36m3oIvQHO1BC820enZ5KmHGwg4" />
->>>>>>> Stashed changes
-=======
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 2
-}]]></component>
-  <component name="ProjectId" id="36m44dXT6CHKzeclCuZQkGBoPyu" />
-  <component name="ProjectReloadState">
-    <option name="STATE" value="1" />
-  </component>
->>>>>>> Stashed changes
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -74,32 +47,12 @@
     "android.gradle.sync.needed": "true",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
-    "git-widget-placeholder": "Database"
   }
 }]]></component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-      <changelist id="b5828162-123d-4421-b858-c362c4bf934b" name="Changes" comment="" />
-      <created>1765595671985</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1765595671985</updated>
-=======
-      <changelist id="1ffbf137-9d76-4f2f-974e-8e7243448c9e" name="Changes" comment="" />
-      <created>1765598092567</created>
-      <option name="number" value="Default" />
-      <option name="presentableId" value="Default" />
-      <updated>1765598092567</updated>
->>>>>>> Stashed changes
-=======
-      <changelist id="f8edce29-a8f3-44d6-8f39-7ee81d2fd47e" name="Changes" comment="" />
-      <created>1765598223014</created>
-      <option name="number" value="Default" />
-      <option name="presentableId" value="Default" />
-      <updated>1765598223014</updated>
->>>>>>> Stashed changes
     </task>
     <servers />
   </component>
