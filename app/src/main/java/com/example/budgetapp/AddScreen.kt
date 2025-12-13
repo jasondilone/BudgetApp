@@ -17,13 +17,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -45,14 +48,18 @@ import androidx.navigation.compose.rememberNavController
 import com.example.budgetapp.theme.BudgetAppTheme
 
 @Composable
-fun Add(modifier: Modifier = Modifier) {
+fun Add(
+    modifier: Modifier = Modifier,
+    viewModel: AddExpenseViewModel
+    ) {
     var expandedType by remember { mutableStateOf(false) }
     var expandedCategory by remember { mutableStateOf(false) }
     var expandedCategorySelection by remember { mutableStateOf(false) }
     var typeSelection by remember { mutableStateOf(R.string.expense) }
     var amountInput by remember { mutableStateOf("") }
     var isRecurring by remember { mutableStateOf(false) }
-
+    var selectedCategory by remember { mutableStateOf("Other") }
+    var descriptionInput by remember { mutableStateOf("") }
     Column(
         modifier = modifier.fillMaxSize().padding(top = 25.dp)
             .background(color = MaterialTheme.colorScheme.background),
@@ -155,6 +162,17 @@ fun Add(modifier: Modifier = Modifier) {
                     maxLines = 1,
                     modifier = Modifier.padding(horizontal = 20.dp)
                 )
+                BasicTextField(
+                    value = amountInput,
+                    onValueChange = { amountInput = it },
+                    singleLine = true,
+                    textStyle = LocalTextStyle.current.copy(
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        fontSize = mediumFontSize
+                    ),
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp)
+                )
+
             }
         }
 
@@ -182,6 +200,16 @@ fun Add(modifier: Modifier = Modifier) {
                     .align(Alignment.Start),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                BasicTextField(
+                    value = descriptionInput,
+                    onValueChange = { descriptionInput = it },
+                    singleLine = true,
+                    textStyle = LocalTextStyle.current.copy(
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        fontSize = mediumFontSize
+                    ),
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp)
+                )
 
             }
         }
@@ -245,11 +273,18 @@ fun Add(modifier: Modifier = Modifier) {
                         .border(2.dp, MaterialTheme.colorScheme.onPrimary, RoundedCornerShape(roundDp))
                         .background(MaterialTheme.colorScheme.tertiary, RoundedCornerShape(roundDp))
                 ) {
-
-                }
+                    listOf("Food", "Transport", "Bills", "Other").forEach { category ->
+                        DropdownMenuItem(
+                            text = { Text(category) },
+                            onClick = {
+                                selectedCategory = category
+                                expandedCategorySelection = false
+                            }
+                        )
+                    }
             }
         }
-
+        //recurring
         Row(
             modifier = Modifier.fillMaxWidth()
                 .height(50.dp),
@@ -277,14 +312,23 @@ fun Add(modifier: Modifier = Modifier) {
             )
         }
 
-
+        //addbbutton
         Row(
             modifier = Modifier.fillMaxWidth()
                 .padding(20.dp),
             horizontalArrangement = Arrangement.Center
         ) {
             Button(
-                onClick = {  },
+                onClick = {
+                    val amount = amountInput.toDoubleOrNull() ?: 0.0
+                    viewModel.addExpense(
+                        category = selectedCategory,
+                        description = descriptionInput,
+                        amount = amount,
+                        isRecurring = isRecurring
+                    )
+
+                },
                 shape = RoundedCornerShape(64.dp),
                 modifier = Modifier.size(180.dp, 50.dp),
                 colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.secondary)
@@ -298,7 +342,8 @@ fun Add(modifier: Modifier = Modifier) {
         }
     }
 }
-
+}
+/*
 @Preview
 @Composable
 fun AddPreview() {
@@ -318,3 +363,5 @@ fun AddPreview() {
         }
     }
 }
+
+ */

@@ -3,7 +3,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    id("com.google.devtools.ksp") version "2.1.0-1.0.29"
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -44,9 +44,12 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.material3)
+    val room_version = "2.6.1"
     implementation("androidx.room:room-runtime:2.7.1")
     ksp("androidx.room:room-compiler:2.7.1")
     implementation("androidx.room:room-ktx:2.7.1")
+
 
     implementation("androidx.navigation:navigation-compose:2.9.6")
     implementation("androidx.compose.material:material-icons-extended")

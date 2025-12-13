@@ -6,10 +6,10 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ExpenseDao {
-    @Query("SELECT * FROM expenses ORDER BY date DESC")
+    @androidx.room.Query("SELECT * FROM expenses ORDER BY date DESC")
     fun getAllExpensesStream(): Flow<List<Expense>>
 
-    @Query("SELECT * FROM expenses WHERE id = :id")
+    @androidx.room.Query("SELECT * FROM expenses WHERE id = :id")
     fun getExpenseStream(id: Int): Flow<Expense?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -21,6 +21,6 @@ interface ExpenseDao {
     @Delete
     suspend fun deleteExpense(expense: Expense)
 
-    @Query("DELETE FROM expenses")
+    @androidx.room.Query("DELETE FROM expenses")
     suspend fun clearAll()
 }

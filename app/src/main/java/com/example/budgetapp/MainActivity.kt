@@ -14,6 +14,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -95,8 +96,20 @@ fun BudgetApp() {
                 )
             }
             composable("add") {
-                Add(modifier = Modifier.padding(innerPadding))
+                val context = LocalContext.current
+                val appContainer = remember { AppDataContainer(context) }
+
+                val addExpenseViewModel: AddExpenseViewModel = viewModel(
+                    factory = AddExpenseViewModelFactory(appContainer.expensesRepository)
+                )
+
+                Add(
+                    modifier = Modifier.padding(innerPadding),
+                    viewModel = addExpenseViewModel
+                )
             }
+
+
             composable("settings") {
                 Settings(
                     modifier = Modifier.padding(innerPadding),
