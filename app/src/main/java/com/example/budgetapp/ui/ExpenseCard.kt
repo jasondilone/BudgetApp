@@ -20,6 +20,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.budgetapp.data.Expense
+import com.example.budgetapp.centsNumberFormatter
+import com.example.budgetapp.largeFontSize
+import com.example.budgetapp.mediumFontSize
+import com.example.budgetapp.smallFontSize
 import com.example.budgetapp.theme.BudgetAppTheme
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter

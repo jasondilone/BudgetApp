@@ -49,6 +49,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.budgetapp.data.Expense
+import com.example.budgetapp.R
+import com.example.budgetapp.centsNumberFormatter
+import com.example.budgetapp.largeFontSize
+import com.example.budgetapp.mediumFontSize
+import com.example.budgetapp.noCentsNumberFormatter
+import com.example.budgetapp.roundDp
 import com.example.budgetapp.theme.BudgetAppTheme
 import com.example.budgetapp.theme.orangeColor
 import java.time.LocalDate
@@ -122,7 +129,7 @@ fun Home(
                         color = MaterialTheme.colorScheme.primary
                     )
                     Text(
-                        text = "$" + centsNumberFormatter.format(spent),
+                        text = "$" + centsNumberFormatter.format(100.0),
                         fontSize = mediumFontSize,
                         maxLines = 1,
                         color = MaterialTheme.colorScheme.onSecondary

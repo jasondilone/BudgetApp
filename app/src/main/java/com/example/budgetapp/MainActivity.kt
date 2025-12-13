@@ -23,6 +23,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.budgetapp.theme.BudgetAppTheme
+import com.example.budgetapp.ui.Add
+import com.example.budgetapp.ui.Expenses
+import com.example.budgetapp.ui.Home
+import com.example.budgetapp.ui.NavigationBar
+import com.example.budgetapp.ui.Settings
 //import com.example.com.example.budgetapp.BudgetAppTheme
 import java.text.DecimalFormat
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -33,9 +38,13 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            BudgetAppTheme(darkTheme = false) {
+            var isDarkMode by remember { mutableStateOf(false) }
+            BudgetAppTheme(darkTheme = isDarkMode) {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    BudgetApp()
+                    BudgetApp(
+                        isDarkMode,
+                        onThemeChange = { isDarkMode = it }
+                    )
                 }
             }
         }
@@ -48,7 +57,7 @@ val mediumFontSize = 25.sp
 val smallFontSize = 15.sp
 
 // Formatters
-val centsNumberFormatter = DecimalFormat("#,###.00")
+val centsNumberFormatter = DecimalFormat("#,##0.00")
 val noCentsNumberFormatter = DecimalFormat("#,###")
 
 // Roundness for surfaces
@@ -59,8 +68,8 @@ var spent = 128.50
 var budget = 1000
 
 @Composable
-fun BudgetApp() {
-    var isDarkMode by remember { mutableStateOf(false) }
+fun BudgetApp(isDarkMode: Boolean, onThemeChange: (Boolean) -> Unit) {
+    //var isDarkMode by remember { mutableStateOf(false) }
     val navController = rememberNavController()
 
     Scaffold(
@@ -108,23 +117,23 @@ fun BudgetApp() {
                     viewModel = addExpenseViewModel
                 )
             }
-
-
             composable("settings") {
                 Settings(
                     modifier = Modifier.padding(innerPadding),
                     isDarkMode = isDarkMode,
-                    onDarkModeChange = { isDarkMode = it }
+                    onToggleDarkMode = onThemeChange
                 )
             }
         }
-
     }
 }
 @Preview(showBackground = true)
 @Composable
 fun BudgetAppPreview() {
-    BudgetAppTheme(darkTheme = false) {
-        BudgetApp()
+    BudgetAppTheme() {
+        BudgetApp(
+            false,
+            onThemeChange = {  }
+            )
     }
 }

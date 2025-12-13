@@ -38,9 +38,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.budgetapp.data.Expense
+import com.example.budgetapp.R
+import com.example.budgetapp.largeFontSize
+import com.example.budgetapp.mediumFontSize
+import com.example.budgetapp.roundDp
+import com.example.budgetapp.smallFontSize
 import com.example.budgetapp.theme.BudgetAppTheme
+import java.time.DayOfWeek
 import java.time.LocalDate
 
 @Composable
@@ -118,6 +126,8 @@ fun Expenses(
             }
         }
 
+        // sample categories
+        val categories = listOf("All", "Food", "Transportation", "Entertainment", "Other")
         // Category selection
         Surface(
             modifier = Modifier.fillMaxWidth().padding(10.dp),
@@ -166,11 +176,28 @@ fun Expenses(
                     expanded = expandedCategory,
                     onDismissRequest = { expandedCategory = false },
                     modifier = Modifier
-                        .width(330.dp)
-                        .border(2.dp, Color.Black, RoundedCornerShape(roundDp))
-                        .background(MaterialTheme.colorScheme.tertiary, RoundedCornerShape(roundDp))
+                        .width(370.dp)
+                        .border(0.dp, MaterialTheme.colorScheme.onPrimary, RoundedCornerShape(roundDp)),
+                    containerColor = MaterialTheme.colorScheme.secondary,
+                    shape = RoundedCornerShape(roundDp)
                 ) {
-
+                    categories.forEach { category ->
+                        DropdownMenuItem(
+                            text = {
+                                Text(
+                                    text = category,
+                                    color = MaterialTheme.colorScheme.onTertiary,
+                                    fontSize = mediumFontSize,
+                                    modifier = Modifier.fillMaxWidth(),
+                                    textAlign = TextAlign.Center
+                                )
+                            },
+                            onClick = {
+                                selectedCategory = category
+                                expandedCategory = false
+                            }
+                        )
+                    }
                 }
             }
         }
@@ -255,11 +282,24 @@ fun Expenses(
 
                     DropdownMenu(
                         expanded = expandedTime,
-                        onDismissRequest = { expandedTime = false }
+                        onDismissRequest = { expandedTime = false },
+                        modifier = Modifier
+                            .width(370.dp)
+                            .border(0.dp, MaterialTheme.colorScheme.tertiary, RoundedCornerShape(roundDp)),
+                        containerColor = MaterialTheme.colorScheme.secondary,
+                        shape = RoundedCornerShape(roundDp)
                     ) {
                         timeSpans.forEach { span ->
                             DropdownMenuItem(
-                                text = { Text(span) },
+                                text = {
+                                    Text(
+                                        span,
+                                        color = MaterialTheme.colorScheme.onTertiary,
+                                        fontSize = mediumFontSize,
+                                        modifier = Modifier.fillMaxWidth(),
+                                        textAlign = TextAlign.Center
+                                    )
+                                       },
                                 onClick = {
                                     selectedTime = span
                                     expandedTime = false
