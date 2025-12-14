@@ -1,7 +1,6 @@
 package com.example.budgetapp.ui
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -16,7 +15,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -30,26 +28,22 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.budgetapp.data.Expense
+import com.example.budgetapp.data.entity.Expense
 import com.example.budgetapp.R
 import com.example.budgetapp.largeFontSize
 import com.example.budgetapp.mediumFontSize
 import com.example.budgetapp.roundDp
 import com.example.budgetapp.smallFontSize
 import com.example.budgetapp.theme.BudgetAppTheme
-import java.time.DayOfWeek
-import java.time.LocalDate
 
 @Composable
 fun Expenses(modifier: Modifier = Modifier) {
@@ -62,11 +56,12 @@ fun Expenses(modifier: Modifier = Modifier) {
         // Don't need sample data, use real data
     )
 
+    /*
     val filteredExpenses = expenses.filter { expense ->
-        val categoryMatch = (selectedCategory == "All" || expense.category == selectedCategory)
+        val categoryMatch = (selectedCategory == "All" || expense.categoryId.toString() == selectedCategory)
 
         val timeMatch = when (selectedTime) {
-            "This Month" -> expense.date.month == LocalDate.now().month &&
+            "This Month" -> expense.dateEpochMillis.month == LocalDate.now().month &&
                     expense.date.year == LocalDate.now().year
 
             "This Week" -> {
@@ -79,7 +74,7 @@ fun Expenses(modifier: Modifier = Modifier) {
         }
         categoryMatch && timeMatch
     }
-
+*/
     Column(
         modifier = modifier.fillMaxSize().padding(top = 25.dp),
         verticalArrangement = Arrangement.Top

@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Icon
@@ -23,40 +22,12 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.budgetapp.data.Expense
 import com.example.budgetapp.R
 import com.example.budgetapp.largeFontSize
 import com.example.budgetapp.theme.BudgetAppTheme
-import java.time.LocalDate
 
 @Composable
 fun Recurring(modifier: Modifier = Modifier) {
-    val expenses = listOf<Expense>(
-        Expense(
-            60,
-            "Subscription",
-            "DoorDash",
-            10.99,
-            LocalDate.now(),
-            true
-        ),
-        Expense(
-            61,
-            "Subscription",
-            "Disney+",
-            5.99,
-            LocalDate.now(),
-            true
-        ),
-        Expense(
-            62,
-            "Bills",
-            "T-Mobile",
-            66.89,
-            LocalDate.now(),
-            true
-        )
-    )
 
     Column(
         modifier = modifier.fillMaxSize().padding(top = 25.dp),
@@ -82,9 +53,12 @@ fun Recurring(modifier: Modifier = Modifier) {
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(0.dp)
         ) {
+            /*
             items(expenses) { expense ->
                 ExpenseCard(expense = expense)
             }
+
+             */
         }
     }
 }
@@ -99,7 +73,7 @@ fun RecurringPreview() {
                     modifier = Modifier.padding(horizontal = 20.dp)
                         .padding(top = 8.dp, bottom = 32.dp)
                 ) {
-                    NavigationBarPreview()
+                    //NavigationBarPreview()
                 }
             }
         ) { innerPadding ->

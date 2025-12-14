@@ -15,59 +15,72 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.budgetapp.data.Expense
-import com.example.budgetapp.centsNumberFormatter
+import com.example.budgetapp.data.entity.Expense
 import com.example.budgetapp.largeFontSize
 import com.example.budgetapp.mediumFontSize
 import com.example.budgetapp.smallFontSize
 import com.example.budgetapp.theme.BudgetAppTheme
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+import com.example.budgetapp.utility.formatCents
+import com.example.budgetapp.utility.formatDate
+
+data class CategoryUi(
+    val name: String,
+    val color: Color
+)
 
 @Composable
-fun ExpenseCard(expense: Expense) {
+fun ExpenseCard(
+    expense: Expense,
+    category: CategoryUi,
+    modifier: Modifier = Modifier
+) {
+    val dateText = formatDate(expense.dateEpochMillis)
 
     Surface(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 0.dp),
+        modifier = modifier.fillMaxWidth().padding(horizontal = 0.dp),
         color = MaterialTheme.colorScheme.primary,
         border = BorderStroke(0.dp, MaterialTheme.colorScheme.secondary)
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
                 .height(IntrinsicSize.Min)
                 .height(90.dp),
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
-
-            // Category and data Column
+            // Category + date
             Column(
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .weight(1f)
                     .padding(horizontal = 25.dp)
                     .align(Alignment.CenterVertically)
             ) {
                 Text(
-                    text = expense.category,
+                    text = category.name,
                     fontSize = smallFontSize,
                     maxLines = 1,
-                    color = MaterialTheme.colorScheme.tertiary,
+                    color = category.color,
                     modifier = Modifier.fillMaxWidth(),
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "" + expense.date.format(DateTimeFormatter.ofPattern("MMM d")),
+                    text = dateText,
                     fontSize = mediumFontSize,
                     maxLines = 1,
                     color = MaterialTheme.colorScheme.secondary
                 )
             }
 
-            // Amount Column
+            // Description + amount
             Column(
-                modifier = Modifier.weight(1f).fillMaxHeight(),
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight(),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
@@ -79,7 +92,7 @@ fun ExpenseCard(expense: Expense) {
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "$" + centsNumberFormatter.format(expense.amount),
+                    text = formatCents(expense.amountCents),
                     fontSize = largeFontSize,
                     color = MaterialTheme.colorScheme.tertiary,
                     maxLines = 1
@@ -93,15 +106,21 @@ fun ExpenseCard(expense: Expense) {
 @Composable
 fun ExpenseCardPreview() {
     BudgetAppTheme(darkTheme = true) {
-        // Example expense
         val myExpense = Expense(
-            100,
-            "food",
-            "trader joes",
-            15.39,
-            LocalDate.now(),
-            false
+            id = 1,
+            categoryId = 1,
+            description = "trader joes",
+            amountCents = 1539,
+            dateEpochMillis = System.currentTimeMillis(),
+            isRecurring = false
         )
-        ExpenseCard(myExpense)
+
+        ExpenseCard(
+            expense = myExpense,
+            category = CategoryUi(
+                name = "groceries",
+                color = Color(0xFF4CAF50) // green-ish
+            )
+        )
     }
 }

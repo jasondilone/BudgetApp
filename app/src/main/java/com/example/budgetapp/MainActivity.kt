@@ -18,17 +18,27 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.budgetapp.data.repository.BudgetRepository
+import com.example.budgetapp.data.db.DatabaseProvider
 import com.example.budgetapp.theme.BudgetAppTheme
-import com.example.budgetapp.ui.Add
+import com.example.budgetapp.ui.AddRoute
+import com.example.budgetapp.ui.AddScreenViewModel
+import com.example.budgetapp.ui.BudgetViewModel
 import com.example.budgetapp.ui.Expenses
-import com.example.budgetapp.ui.Home
+import com.example.budgetapp.ui.HomeRoute
 import com.example.budgetapp.ui.NavigationBar
 import com.example.budgetapp.ui.Settings
 //import com.example.com.example.budgetapp.BudgetAppTheme
 import java.text.DecimalFormat
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,6 +49,7 @@ class MainActivity : ComponentActivity() {
             BudgetAppTheme(darkTheme = isDarkMode) {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     BudgetApp(
+                        activity = this@MainActivity,
                         isDarkMode,
                         onThemeChange = { isDarkMode = it }
                     )
@@ -53,10 +64,6 @@ val largeFontSize = 35.sp
 val mediumFontSize = 25.sp
 val smallFontSize = 15.sp
 
-// Formatters
-val centsNumberFormatter = DecimalFormat("#,##0.00")
-val noCentsNumberFormatter = DecimalFormat("#,###")
-
 // Roundness for surfaces
 val roundDp: Dp = 8.dp
 
@@ -65,8 +72,48 @@ var spent = 336.25
 var budget = 1000
 */
 
+class BudgetViewModelFactory(
+    private val activity: ComponentActivity
+) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(BudgetViewModel::class.java)) {
+            val db = DatabaseProvider.getDatabase(activity.applicationContext)
+            val repo = BudgetRepository(
+                db.expenseDao(),
+                db.categoryDao(),
+                db.settingsDao()
+            )
+            @Suppress("UNCHECKED_CAST")
+            return BudgetViewModel(repo) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
+    }
+}
+class AddScreenViewModelFactory(
+    private val activity: ComponentActivity
+) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(AddScreenViewModel::class.java)) {
+            val db = DatabaseProvider.getDatabase(activity)
+            val repo = BudgetRepository(
+                db.expenseDao(),
+                db.categoryDao(),
+                db.settingsDao()
+            )
+            @Suppress("UNCHECKED_CAST")
+            return AddScreenViewModel(budgetRepository = repo) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
+    }
+}
+
+
 @Composable
-fun BudgetApp(isDarkMode: Boolean, onThemeChange: (Boolean) -> Unit) {
+fun BudgetApp(
+    activity: ComponentActivity,
+    isDarkMode: Boolean,
+    onThemeChange: (Boolean) -> Unit
+) {
     //var isDarkMode by remember { mutableStateOf(false) }
     val navController = rememberNavController()
     Scaffold(
@@ -84,10 +131,14 @@ fun BudgetApp(isDarkMode: Boolean, onThemeChange: (Boolean) -> Unit) {
         NavHost(
             navController = navController,
             startDestination = "home",
-            modifier = Modifier.padding()
+            modifier = Modifier.padding(innerPadding)
         ) {
             composable("home") {
-                Home(
+                val budgetVm: BudgetViewModel = viewModel(
+                    factory = BudgetViewModelFactory(activity)
+                )
+                HomeRoute(
+                    vModel = budgetVm,
                     modifier = Modifier.padding(innerPadding)
                 )
             }
@@ -95,7 +146,17 @@ fun BudgetApp(isDarkMode: Boolean, onThemeChange: (Boolean) -> Unit) {
                 Expenses(modifier = Modifier.padding(innerPadding))
             }
             composable("add") {
-                Add(modifier = Modifier.padding(innerPadding))
+                val addvModel: AddScreenViewModel = viewModel(
+                    factory = AddScreenViewModelFactory(activity)
+                )
+                val budgetVm: BudgetViewModel = viewModel(
+                    factory = BudgetViewModelFactory(activity)
+                )
+                AddRoute(
+                    addVm = addvModel,
+                    budgetVm = budgetVm,
+                    modifier = Modifier.padding(innerPadding)
+                )
             }
             composable("settings") {
                 Settings(
@@ -111,9 +172,12 @@ fun BudgetApp(isDarkMode: Boolean, onThemeChange: (Boolean) -> Unit) {
 @Composable
 fun BudgetAppPreview() {
     BudgetAppTheme() {
+        /*
         BudgetApp(
             false,
             onThemeChange = {  }
             )
+    }
+         */
     }
 }
