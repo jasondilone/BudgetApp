@@ -9,11 +9,9 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,8 +19,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.budgetapp.theme.BudgetAppTheme
-import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import com.example.budgetapp.Expense
+import com.example.budgetapp.centsNumberFormatter
+import com.example.budgetapp.largeFontSize
+import com.example.budgetapp.mediumFontSize
+import com.example.budgetapp.smallFontSize
+import java.time.LocalDate
 
 @Composable
 fun ExpenseCard(expense: Expense) {
@@ -90,5 +93,15 @@ fun ExpenseCard(expense: Expense) {
 @Composable
 fun ExpenseCardPreview() {
     BudgetAppTheme(darkTheme = true) {
+        // Example expense
+        val myExpense = Expense(
+            100,
+            "food",
+            "trader joes",
+            15.39,
+            "1",
+            false
+        )
+        ExpenseCard(myExpense)
     }
 }

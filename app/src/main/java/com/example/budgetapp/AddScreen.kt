@@ -4,7 +4,6 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -28,7 +27,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
@@ -42,17 +40,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.rememberNavController
-import com.example.budgetapp.theme.BudgetAppTheme
-
 @Composable
 fun Add(
     modifier: Modifier = Modifier,
     viewModel: AddExpenseViewModel
     ) {
     var expandedType by remember { mutableStateOf(false) }
+    var selectedType by remember { mutableStateOf("Expense") }
     var expandedCategory by remember { mutableStateOf(false) }
     var expandedCategorySelection by remember { mutableStateOf(false) }
     var typeSelection by remember { mutableStateOf(R.string.expense) }
@@ -60,6 +56,7 @@ fun Add(
     var isRecurring by remember { mutableStateOf(false) }
     var selectedCategory by remember { mutableStateOf("Other") }
     var descriptionInput by remember { mutableStateOf("") }
+    val types = listOf("Expense", "Category")
     Column(
         modifier = modifier.fillMaxSize().padding(top = 25.dp)
             .background(color = MaterialTheme.colorScheme.background),
@@ -118,14 +115,36 @@ fun Add(
                     )
                 }
                 DropdownMenu(
-                    expanded = expandedCategory,
-                    onDismissRequest = { expandedCategory = false },
+                    expanded = expandedType,
+                    onDismissRequest = { expandedType = false },
                     modifier = Modifier
-                        .width(330.dp)
-                        .border(2.dp, Color.Black, RoundedCornerShape(roundDp))
-                        .background(MaterialTheme.colorScheme.tertiary, RoundedCornerShape(roundDp))
+                        .padding(horizontal = 10.dp)
+                        .border(
+                            0.dp,
+                            MaterialTheme.colorScheme.onPrimary,
+                            RoundedCornerShape(roundDp)
+                        )
+                        .width(370.dp),
+                    containerColor = MaterialTheme.colorScheme.secondary,
+                    shape = RoundedCornerShape(roundDp)
                 ) {
-
+                    types.forEach { type ->
+                        DropdownMenuItem(
+                            text = {
+                                Text(
+                                    text = type,
+                                    color = MaterialTheme.colorScheme.onTertiary,
+                                    fontSize = mediumFontSize,
+                                    modifier = Modifier.fillMaxWidth(),
+                                    textAlign = TextAlign.Center
+                                )
+                            },
+                            onClick = {
+                                selectedType = type
+                                expandedType = false
+                            }
+                        )
+                    }
                 }
             }
         }

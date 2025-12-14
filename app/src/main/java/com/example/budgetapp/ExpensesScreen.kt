@@ -25,7 +25,14 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
+import androidx.compose.ui.text.style.TextAlign
+import com.example.budgetapp.Expense
+import com.example.budgetapp.R
+import com.example.budgetapp.largeFontSize
+import com.example.budgetapp.mediumFontSize
+import com.example.budgetapp.roundDp
+import com.example.budgetapp.smallFontSize
+import java.time.DayOfWeek
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,9 +45,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
+
 import androidx.compose.ui.unit.dp
-import com.example.budgetapp.theme.BudgetAppTheme
+
 import java.time.LocalDate
 
 @Composable
@@ -117,6 +124,8 @@ fun Expenses(
                 )
             }
         }
+        // sample categories
+        val categories = listOf("All", "Food", "Transportation", "Entertainment", "Other")
 
         // Category selection
         Surface(
@@ -144,7 +153,7 @@ fun Expenses(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = stringResource(R.string.all_categories),
+                            text = selectedCategory,
                             fontSize = mediumFontSize,
                             color = MaterialTheme.colorScheme.tertiary,
                             maxLines = 1,
@@ -166,11 +175,28 @@ fun Expenses(
                     expanded = expandedCategory,
                     onDismissRequest = { expandedCategory = false },
                     modifier = Modifier
-                        .width(330.dp)
-                        .border(2.dp, Color.Black, RoundedCornerShape(roundDp))
-                        .background(MaterialTheme.colorScheme.tertiary, RoundedCornerShape(roundDp))
+                        .width(370.dp)
+                        .border(0.dp, MaterialTheme.colorScheme.onPrimary, RoundedCornerShape(roundDp)),
+                    containerColor = MaterialTheme.colorScheme.secondary,
+                    shape = RoundedCornerShape(roundDp)
                 ) {
-
+                    categories.forEach { category ->
+                        DropdownMenuItem(
+                            text = {
+                                Text(
+                                    text = category,
+                                    color = MaterialTheme.colorScheme.onTertiary,
+                                    fontSize = mediumFontSize,
+                                    modifier = Modifier.fillMaxWidth(),
+                                    textAlign = TextAlign.Center
+                                )
+                            },
+                            onClick = {
+                                selectedCategory = category
+                                expandedCategory = false
+                            }
+                        )
+                    }
                 }
             }
         }
@@ -202,7 +228,7 @@ fun Expenses(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = stringResource(R.string.this_month),
+                            text = selectedTime,
                             fontSize = mediumFontSize,
                             color = MaterialTheme.colorScheme.tertiary,
                             maxLines = 1,
@@ -219,7 +245,7 @@ fun Expenses(
                         contentDescription = null
                     )
                 }
-
+/*
                 DropdownMenu(
                     expanded = expandedTime,
                     onDismissRequest = { expandedTime = false },
@@ -250,16 +276,31 @@ fun Expenses(
                             )
                         }
                     }
+
+ */
                     //TIME SPAN DROPDOWN LIST
                     val timeSpans = listOf("This Month", "This Week", "All Time")
 
                     DropdownMenu(
                         expanded = expandedTime,
-                        onDismissRequest = { expandedTime = false }
+                        onDismissRequest = { expandedTime = false },
+                        modifier = Modifier
+                            .width(370.dp)
+                            .border(0.dp, MaterialTheme.colorScheme.tertiary, RoundedCornerShape(roundDp)),
+                        containerColor = MaterialTheme.colorScheme.secondary,
+                        shape = RoundedCornerShape(roundDp)
                     ) {
                         timeSpans.forEach { span ->
                             DropdownMenuItem(
-                                text = { Text(span) },
+                                text = {
+                                    Text(
+                                        span,
+                                        color = MaterialTheme.colorScheme.onTertiary,
+                                        fontSize = mediumFontSize,
+                                        modifier = Modifier.fillMaxWidth(),
+                                        textAlign = TextAlign.Center
+                                    )
+                                },
                                 onClick = {
                                     selectedTime = span
                                     expandedTime = false
@@ -274,14 +315,13 @@ fun Expenses(
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(0.dp)
         ) {
-            items(expenses) { expense ->
-                ExpenseCard(expense = expense)
+            items(0) { expense ->
+                //ExpenseCard(expense = expense)
             }
         }
 
 
     }
-}
 /*
 @Preview
 @Composable

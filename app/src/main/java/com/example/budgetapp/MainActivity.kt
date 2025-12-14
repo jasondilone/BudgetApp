@@ -26,6 +26,11 @@ import com.example.budgetapp.theme.BudgetAppTheme
 //import com.example.com.example.budgetapp.BudgetAppTheme
 import java.text.DecimalFormat
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.budgetapp.Add
+import com.example.budgetapp.Expenses
+import com.example.budgetapp.Home
+import com.example.budgetapp.NavigationBar
+import com.example.budgetapp.Settings
 
 
 class MainActivity : ComponentActivity() {
@@ -33,7 +38,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            BudgetAppTheme(darkTheme = false) {
+            var isDarkMode by remember { mutableStateOf(false) }
+            BudgetAppTheme(darkTheme = isDarkMode) {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     BudgetApp()
                 }
@@ -48,15 +54,15 @@ val mediumFontSize = 25.sp
 val smallFontSize = 15.sp
 
 // Formatters
-val centsNumberFormatter = DecimalFormat("#,###.00")
+val centsNumberFormatter = DecimalFormat("#,##0.00")
 val noCentsNumberFormatter = DecimalFormat("#,###")
 
 // Roundness for surfaces
 val roundDp: Dp = 8.dp
 
 // Spent | Budget
-var spent = 128.50
-var budget = 1000
+//var spent = 128.50
+//var budget = 1000
 
 @Composable
 fun BudgetApp() {

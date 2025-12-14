@@ -54,6 +54,13 @@ import com.example.budgetapp.theme.orangeColor
 import java.time.LocalDate
 import androidx.compose.runtime.collectAsState
 import com.example.budgetapp.ExpensesViewModel
+import com.example.budgetapp.Expense
+import com.example.budgetapp.R
+import com.example.budgetapp.centsNumberFormatter
+import com.example.budgetapp.largeFontSize
+import com.example.budgetapp.mediumFontSize
+import com.example.budgetapp.noCentsNumberFormatter
+import com.example.budgetapp.roundDp
 
 
 @Composable
