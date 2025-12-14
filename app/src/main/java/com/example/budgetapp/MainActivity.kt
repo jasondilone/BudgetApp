@@ -30,15 +30,12 @@ import com.example.budgetapp.theme.BudgetAppTheme
 import com.example.budgetapp.ui.AddRoute
 import com.example.budgetapp.ui.AddScreenViewModel
 import com.example.budgetapp.ui.BudgetViewModel
-import com.example.budgetapp.ui.Expenses
+import com.example.budgetapp.ui.ExpensesContent
+import com.example.budgetapp.ui.ExpensesRoute
 import com.example.budgetapp.ui.HomeRoute
 import com.example.budgetapp.ui.NavigationBar
 import com.example.budgetapp.ui.Settings
 //import com.example.com.example.budgetapp.BudgetAppTheme
-import java.text.DecimalFormat
-import java.time.Instant
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -139,11 +136,17 @@ fun BudgetApp(
                 )
                 HomeRoute(
                     vModel = budgetVm,
-                    modifier = Modifier.padding(innerPadding)
+                    modifier = Modifier.padding()
                 )
             }
             composable("expenses") {
-                Expenses(modifier = Modifier.padding(innerPadding))
+                val budgetVm: BudgetViewModel = viewModel(
+                    factory = BudgetViewModelFactory(activity)
+                )
+                ExpensesRoute(
+                    vModel = budgetVm,
+                    modifier = Modifier.padding()
+                )
             }
             composable("add") {
                 val addvModel: AddScreenViewModel = viewModel(

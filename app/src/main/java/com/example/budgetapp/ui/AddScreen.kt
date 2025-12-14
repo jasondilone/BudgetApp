@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -67,6 +68,8 @@ import com.example.budgetapp.theme.color6
 import com.example.budgetapp.theme.color7
 import com.example.budgetapp.theme.color8
 import com.example.budgetapp.theme.color9
+import com.example.budgetapp.ui.model.toUi
+import kotlin.collections.get
 
 
 @Composable
@@ -92,7 +95,7 @@ fun AddContent(
     expenseUiState: ExpenseUiState,
     categories: List<com.example.budgetapp.data.entity.Category>,
     onUpdateExpense: (ExpenseDetails) -> Unit,
-    onSaveExpense: () -> Unit,
+    onSaveExpense: (ExpenseDetails) -> Unit,
     onSaveCategory: (androidx.compose.ui.graphics.Color) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -114,6 +117,9 @@ fun AddContent(
 
     // show label, but store ID
     var selectedCategoryLabel by remember { mutableStateOf("Category") }
+    val categoryById = remember(categories) {
+        categories.associateBy { it.id }
+    }
 
     val types = listOf("Expense", "Category")
 
@@ -304,8 +310,23 @@ fun AddContent(
                     horizontalArrangement = Arrangement.SpaceEvenly,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
+
+                    // Category color next to catergory name in Expense
+                    val categoryUi =
+                        categoryById[expenseUiState.expenseDetails.categoryId]?.toUi()
+                            ?: CategoryUi("Uncategorized", MaterialTheme.colorScheme.secondary)
+
+                    Surface(
+                        shape = CircleShape,
+                        color = categoryUi.color,
+                        modifier = Modifier.size(34.dp)
+                            .weight(.17f)
+                            .padding(start = 10.dp),
+                        border = BorderStroke(0.dp, MaterialTheme.colorScheme.tertiary)
+                    ) { }
                     Column(
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier.weight(1f)
+                            .padding(start = 10.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
@@ -488,18 +509,15 @@ fun AddContent(
                         )
 
                         // Save
-                        onUpdateExpense(detailsWithDate)
-                        onSaveExpense()
+                        onSaveExpense(detailsWithDate)
 
-                        // Reset UI-only fields
+                        // Reset UI fields
                         amountInput = ""
                         isRecurring = false
                         selectedCategoryLabel = "Category"
 
-                        // Reset VM-backed form state so the next entry starts fresh
                         onUpdateExpense(ExpenseDetails())
                     } else {
-                        // Save category using the text field (name) + selected color
                         onSaveCategory(selectedColor)
                         amountInput = ""
                         isRecurring = false

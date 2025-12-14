@@ -1,5 +1,6 @@
 package com.example.budgetapp.ui
 
+import android.graphics.drawable.Icon
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,6 +10,10 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Repeat
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -16,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -24,6 +30,8 @@ import com.example.budgetapp.largeFontSize
 import com.example.budgetapp.mediumFontSize
 import com.example.budgetapp.smallFontSize
 import com.example.budgetapp.theme.BudgetAppTheme
+import com.example.budgetapp.theme.color4
+import com.example.budgetapp.theme.color8
 import com.example.budgetapp.utility.formatCents
 import com.example.budgetapp.utility.formatDate
 
@@ -64,7 +72,7 @@ fun ExpenseCard(
                     text = category.name,
                     fontSize = smallFontSize,
                     maxLines = 1,
-                    color = category.color,
+                    color = MaterialTheme.colorScheme.tertiary,
                     modifier = Modifier.fillMaxWidth(),
                     fontWeight = FontWeight.Bold
                 )
@@ -84,13 +92,27 @@ fun ExpenseCard(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                Text(
-                    text = expense.description,
-                    fontSize = smallFontSize,
-                    maxLines = 1,
-                    color = MaterialTheme.colorScheme.tertiary,
-                    fontWeight = FontWeight.Bold
-                )
+                // isRecurring icon added to description if true
+                Row(
+
+                ) {
+                    Text(
+                        text = expense.description,
+                        fontSize = smallFontSize,
+                        maxLines = 1,
+                        color = MaterialTheme.colorScheme.tertiary,
+                        fontWeight = FontWeight.Bold
+                    )
+                    if (expense.isRecurring) {
+                        Icon(
+                            imageVector = Icons.Default.Repeat,
+                            contentDescription = "Recurring",
+                            tint = MaterialTheme.colorScheme.tertiary,
+                            modifier = Modifier.padding(start = 10.dp)
+                        )
+                    }
+                }
+
                 Text(
                     text = formatCents(expense.amountCents),
                     fontSize = largeFontSize,
@@ -98,6 +120,13 @@ fun ExpenseCard(
                     maxLines = 1
                 )
             }
+            Surface(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .width(25.dp),
+                color = category.color,
+                content = {}
+            )
         }
     }
 }
@@ -105,21 +134,20 @@ fun ExpenseCard(
 @Preview
 @Composable
 fun ExpenseCardPreview() {
-    BudgetAppTheme(darkTheme = true) {
+    BudgetAppTheme(darkTheme = false) {
         val myExpense = Expense(
             id = 1,
             categoryId = 1,
             description = "trader joes",
             amountCents = 1539,
             dateEpochMillis = System.currentTimeMillis(),
-            isRecurring = false
+            isRecurring = true
         )
-
         ExpenseCard(
             expense = myExpense,
             category = CategoryUi(
                 name = "groceries",
-                color = Color(0xFF4CAF50) // green-ish
+                color = color4
             )
         )
     }

@@ -79,7 +79,6 @@ fun HomeRoute(
     )
 }
 
-
 @Composable
 fun HomeContent(
     budgetCents: Long,
@@ -100,7 +99,6 @@ fun HomeContent(
         if (budgetCents == 0L) 0f
         else (spentCents.toFloat() / budgetCents.toFloat()).coerceIn(0f, 1f)
 
-    // Map categoryId -> Category (for display)
     val categoryById = remember(categories) {
         categories.associateBy { it.id }
     }
@@ -242,11 +240,14 @@ fun HomeContent(
         // Expenses List
         LazyColumn(
             modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
+                .fillMaxWidth(),
+                //.weight(1f),
             verticalArrangement = Arrangement.spacedBy(0.dp)
         ) {
-            items(expenses) { expense ->
+            items(
+                expenses,
+                key = { it.id }
+            ) { expense ->
                 val dismissState = rememberSwipeToDismissBoxState(
                     confirmValueChange = { value ->
                         if (value != SwipeToDismissBoxValue.Settled) {
@@ -301,9 +302,6 @@ fun HomeContent(
     }
 }
 
-/**
- * Preview: calls HomeContent directly (no ViewModel required)
- */
 @Preview(showBackground = true)
 @Composable
 fun HomePreview() {
@@ -338,7 +336,7 @@ fun HomePreview() {
                 expenses = previewExpenses,
                 categories = previewCategories,
                 onDeleteExpense = {},
-                modifier = Modifier.padding(innerPadding)
+                modifier = Modifier.padding()
             )
         }
     }

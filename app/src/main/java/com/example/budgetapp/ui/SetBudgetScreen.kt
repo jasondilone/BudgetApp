@@ -205,7 +205,7 @@ fun SetBudgetPreview() {
                     modifier = Modifier.padding(horizontal = 20.dp)
                         .padding(top = 8.dp, bottom = 32.dp)
                 ) {
-                    NavigationBarPreview()
+                    //NavigationBarPreview()
                 }
             }
         ) { innerPadding ->

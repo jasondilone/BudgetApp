@@ -10,13 +10,10 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface SettingsDao {
     @Query("SELECT * FROM settings WHERE id = 1")
-    fun getSettings(): Flow<Settings>
+    fun getSettings(): Flow<Settings?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(settings: Settings)
-
-    @Query("UPDATE settings SET budgetCents = :newBudgetCents WHERE id = 1")
-    suspend fun updateBudget(newBudgetCents: Long)
 
     @Query("SELECT budgetCents FROM settings WHERE id = 1")
     fun getBudgetCents(): Flow<Long>

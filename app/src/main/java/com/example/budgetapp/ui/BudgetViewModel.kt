@@ -7,6 +7,7 @@ import com.example.budgetapp.data.entity.Expense
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 enum class BudgetPeriod { WEEKLY, MONTHLY }
@@ -17,6 +18,8 @@ class BudgetViewModel(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
     val categories = repo.getAllCategories()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+
+
     val budgetCents: StateFlow<Long> =
         repo.getBudgetCents()
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), 0L)

@@ -19,10 +19,10 @@ class AddScreenViewModel(private val budgetRepository: BudgetRepository) : ViewM
         expenseUiState =
             ExpenseUiState(expenseDetails = expenseDetails, isEntryValid = validateInput(expenseDetails))
     }
-    fun saveExpense() {
-        if (!expenseUiState.isEntryValid) return
+    fun saveExpense(details: ExpenseDetails) {
+        if (!validateInput(details)) return
         viewModelScope.launch {
-            budgetRepository.addExpense(expenseUiState.expenseDetails.toExpense())
+            budgetRepository.addExpense(details.toExpense())
         }
     }
     private fun validateInput(uiState: ExpenseDetails = expenseUiState.expenseDetails): Boolean {
@@ -31,7 +31,7 @@ class AddScreenViewModel(private val budgetRepository: BudgetRepository) : ViewM
                     amountCents > 0 &&
                     dateEpochMillis > 0
         }
-        }
+    }
     fun saveCategory(selectedColor: Color) {
         val name = expenseUiState.expenseDetails.description.trim()
         if (name.isBlank()) return
