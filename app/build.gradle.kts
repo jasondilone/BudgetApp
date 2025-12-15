@@ -44,6 +44,7 @@ android {
 
 dependencies {
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.appcompat)
     val roomVersion = "2.6.1"
 
     // Room Dependencies

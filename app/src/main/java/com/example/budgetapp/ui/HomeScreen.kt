@@ -1,5 +1,6 @@
 package com.example.budgetapp.ui
 
+import androidx.appcompat.app.AlertDialog
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -23,14 +24,19 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -75,6 +81,7 @@ fun HomeRoute(
         expenses = expenses,
         categories = categories,
         onDeleteExpense = vModel::deleteExpense,
+        onSetBudget = vModel::updateBudgetCents,
         modifier = modifier
     )
 }
@@ -85,6 +92,7 @@ fun HomeContent(
     expenses: List<Expense>,
     categories: List<Category>,
     onDeleteExpense: (Expense) -> Unit,
+    onSetBudget: (Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var showBudgetDialog by remember { mutableStateOf(false) }
@@ -184,11 +192,66 @@ fun HomeContent(
                         text = formatCents(budgetCents),
                         fontSize = mediumFontSize,
                         maxLines = 1,
-                        modifier = Modifier.clickable { showBudgetDialog = true }
+                        modifier = Modifier
+                            .clickable { showBudgetDialog = true }
+                            .padding(8.dp)
                     )
                 }
             }
         }
+        //setting budget
+        if (showBudgetDialog) {
+            AlertDialog(
+                onDismissRequest = { showBudgetDialog = false },
+                title = {
+                    Text(
+                        "Set Budget",
+                        color = MaterialTheme.colorScheme.secondary
+                    )
+                },
+                text = {
+                    OutlinedTextField(
+                        value = newBudgetText,
+                        onValueChange = { newBudgetText = it },
+                        label = {
+                            Text(
+                                "Enter budget in dollars",
+                                color = MaterialTheme.colorScheme.secondary
+                            )
+                        },
+                        textStyle = LocalTextStyle.current.copy(
+                            color = MaterialTheme.colorScheme.secondary
+                        )
+                    )
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            val cents = newBudgetText.toLongOrNull()?.times(100) ?: 0L
+                            onSetBudget(cents)
+                            showBudgetDialog = false
+                        },
+                        colors = ButtonDefaults.textButtonColors(
+                            contentColor = MaterialTheme.colorScheme.secondary
+                        )
+                    ) {
+                        Text("Confirm")
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = { showBudgetDialog = false },
+                        colors = ButtonDefaults.textButtonColors(
+                            contentColor = MaterialTheme.colorScheme.secondary
+                        )
+                    ) {
+                        Text("Cancel")
+                    }
+                },
+                containerColor = MaterialTheme.colorScheme.surface
+            )
+        }
+
 
         // Ring
         Box(
@@ -336,6 +399,7 @@ fun HomePreview() {
                 expenses = previewExpenses,
                 categories = previewCategories,
                 onDeleteExpense = {},
+                onSetBudget = {},
                 modifier = Modifier.padding()
             )
         }
