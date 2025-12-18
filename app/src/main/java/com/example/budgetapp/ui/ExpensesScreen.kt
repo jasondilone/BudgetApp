@@ -59,6 +59,9 @@ import com.example.budgetapp.theme.BudgetAppTheme
 import com.example.budgetapp.theme.color4
 import com.example.budgetapp.theme.color8
 import com.example.budgetapp.ui.model.toUi
+import java.time.DayOfWeek
+import java.time.Instant
+import java.time.ZoneId
 import kotlin.collections.get
 
 @Composable
@@ -95,25 +98,37 @@ fun ExpensesContent(
         categories.associateBy { it.id }
     }
 
-    /*
     val filteredExpenses = expenses.filter { expense ->
-        val categoryMatch = (selectedCategory == "All" || expense.categoryId.toString() == selectedCategory)
-
+        //category drop down
+        val categoryMatch = (selectedCategory == "All" ||
+                categoryById[expense.categoryId]?.name == selectedCategory)
+        //time drop down
         val timeMatch = when (selectedTime) {
-            "This Month" -> expense.dateEpochMillis.month == LocalDate.now().month &&
-                    expense.date.year == LocalDate.now().year
+            "This Month" -> {
+                val now = Instant.ofEpochMilli(System.currentTimeMillis())
+                    .atZone(ZoneId.systemDefault()).toLocalDate()
+                val expenseDate = Instant.ofEpochMilli(expense.dateEpochMillis)
+                    .atZone(ZoneId.systemDefault()).toLocalDate()
 
-            "This Week" -> {
-                val now = LocalDate.now()
-                val startOfWeek = now.with(DayOfWeek.MONDAY)
-                val endOfWeek = now.with(DayOfWeek.SUNDAY)
-                !expense.date.isBefore(startOfWeek) && !expense.date.isAfter(endOfWeek)
+           //mont and year is same
+                expenseDate.month == now.month && expenseDate.year == now.year
             }
-            else -> true // "All Time"
+            "This Week" -> {
+                val now = Instant.ofEpochMilli(System.currentTimeMillis())
+                    .atZone(ZoneId.systemDefault()).toLocalDate()
+                val startOfWeek = now.with(DayOfWeek.MONDAY)
+                val daysOfWeek = (0..6).map { startOfWeek.plusDays(it.toLong()) }
+                val expenseDate = Instant.ofEpochMilli(expense.dateEpochMillis)
+                    .atZone(ZoneId.systemDefault()).toLocalDate()
+           //date is in current week
+                daysOfWeek.contains(expenseDate)
+            }
+            else -> true // all time
         }
         categoryMatch && timeMatch
     }
-*/
+    val sortedExpenses = filteredExpenses.sortedByDescending { it.dateEpochMillis }
+
     Column(
         modifier = modifier.fillMaxSize().padding(top = 25.dp),
         verticalArrangement = Arrangement.Top
@@ -202,6 +217,21 @@ fun ExpensesContent(
                     containerColor = MaterialTheme.colorScheme.secondary,
                     shape = RoundedCornerShape(roundDp)
                 ) {
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = "All",
+                                color = MaterialTheme.colorScheme.onTertiary,
+                                fontSize = mediumFontSize,
+                                modifier = Modifier.fillMaxWidth(),
+                                textAlign = TextAlign.Center
+                            )
+                        },
+                        onClick = {
+                            selectedCategory = "All"
+                            expandedCategory = false
+                        }
+                    )
                     categories.forEach { category ->
                         DropdownMenuItem(
                             text = {
@@ -345,7 +375,7 @@ fun ExpensesContent(
             verticalArrangement = Arrangement.spacedBy(0.dp)
         ) {
             items(
-                expenses,
+                filteredExpenses,
                 key = { it.id }
             ) { expense ->
                 val dismissState = rememberSwipeToDismissBoxState(
