@@ -1,4 +1,4 @@
-package com.example.budgetapp
+package com.example.budgetapp.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -30,14 +30,16 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.rememberNavController
+import com.example.budgetapp.R
+import com.example.budgetapp.largeFontSize
+import com.example.budgetapp.mediumFontSize
 import com.example.budgetapp.theme.BudgetAppTheme
 
 @Composable
 fun Settings(
     modifier: Modifier = Modifier,
     isDarkMode: Boolean,
-    onDarkModeChange: (Boolean) -> Unit
+    onToggleDarkMode: (Boolean) -> Unit
 ) {
     Column(
         modifier = modifier.fillMaxSize().padding(top = 25.dp)
@@ -128,7 +130,9 @@ fun Settings(
                 Spacer(modifier = Modifier.weight(1f))
                 Switch(
                     checked = isDarkMode,
-                    onCheckedChange = { onDarkModeChange(it) },
+                    onCheckedChange = { checked ->
+                        onToggleDarkMode(checked)
+                    },
                     modifier = Modifier
                         .fillMaxHeight()
                         .padding(horizontal = 20.dp),
@@ -155,14 +159,14 @@ fun SettingsPreview() {
                     modifier = Modifier.padding(horizontal = 20.dp)
                         .padding(top = 8.dp, bottom = 32.dp)
                 ) {
-                    NavigationBarPreview()
+                    //NavigationBarPreview()
                 }
             }
         ) { innerPadding ->
             Settings(
                 modifier = Modifier.padding(innerPadding),
-                isDarkMode = true,
-                onDarkModeChange = { true }
+                isDarkMode = false,
+                onToggleDarkMode = {  }
             )
         }
     }

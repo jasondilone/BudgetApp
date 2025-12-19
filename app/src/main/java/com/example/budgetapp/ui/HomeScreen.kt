@@ -1,5 +1,6 @@
-package com.example.budgetapp
+package com.example.budgetapp.ui
 
+import androidx.appcompat.app.AlertDialog
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -20,12 +21,15 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -36,6 +40,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,88 +49,87 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.budgetapp.R
+import com.example.budgetapp.largeFontSize
+import com.example.budgetapp.mediumFontSize
+import com.example.budgetapp.roundDp
 import com.example.budgetapp.theme.BudgetAppTheme
 import com.example.budgetapp.theme.orangeColor
-import java.time.LocalDate
+import com.example.budgetapp.utility.formatCents
+import com.example.budgetapp.data.entity.Category
+import com.example.budgetapp.data.entity.Expense
+import com.example.budgetapp.theme.color4
+import com.example.budgetapp.theme.color8
+import com.example.budgetapp.ui.model.toUi
+
 
 @Composable
-fun Home(modifier: Modifier = Modifier, spent: Double, budget: Int) {
-    // budget button
-    var budget by remember { mutableStateOf(500.0) } //<--- deefault budg val
+fun HomeRoute(
+    vModel: BudgetViewModel,
+    modifier: Modifier = Modifier
+) {
+    val budgetCents by vModel.budgetCents.collectAsState()
+    val expenses by vModel.expenses.collectAsState()
+    val categories by vModel.categories.collectAsState()
+
+    HomeContent(
+        budgetCents = budgetCents,
+        expenses = expenses,
+        categories = categories,
+        onDeleteExpense = vModel::deleteExpense,
+        onSetBudget = vModel::updateBudgetCents,
+        modifier = modifier
+    )
+}
+
+@Composable
+fun HomeContent(
+    budgetCents: Long,
+    expenses: List<Expense>,
+    categories: List<Category>,
+    onDeleteExpense: (Expense) -> Unit,
+    onSetBudget: (Long) -> Unit,
+    modifier: Modifier = Modifier
+) {
     var showBudgetDialog by remember { mutableStateOf(false) }
     var newBudgetText by remember { mutableStateOf("") }
-    // for ring's dark mode colors
 
     val materialPrimary = MaterialTheme.colorScheme.primary
     val materialBackground = MaterialTheme.colorScheme.background
     val materialSecondary = MaterialTheme.colorScheme.secondary
 
-    // Sample Data
-    val expenses = remember {
-        mutableListOf<Expense>(
-            Expense("Food",
-                "deli",
-                26.02,
-                LocalDate.now(),
-                false
-            ),
-            Expense("Subscription",
-                "Prime",
-                11.10,
-                LocalDate.now(),
-                true
-            ),
-            Expense("Shopping",
-                "Amazon",
-                39.99,
-                LocalDate.now(),
-                false
-            ),
-            Expense("Shopping",
-                "Best Buy",
-                67.23,
-                LocalDate.now(),
-                false
-            ),
-            Expense("Food",
-                "Restaurant",
-                80.17,
-                LocalDate.now(),
-                false
-            ),
-            Expense("Bills",
-                "insurance",
-                193.88,
-                LocalDate.now(),
-                true
-            ),
-            Expense("Subscription",
-                "Spotify",
-                15.00,
-                LocalDate.now(),
-                true
-            )
-        ) }
+    val spentCents = expenses.sumOf { it.amountCents }
+    val progress =
+        if (budgetCents == 0L) 0f
+        else (spentCents.toFloat() / budgetCents.toFloat())//.coerceIn(0f, 1f)
 
-    var spentPercentage = ((spent /budget) * 100).toInt()
-    var ringPercent: Float = ((spent /budget) * 360).toFloat()
-    var percentColor = when (spentPercentage) {
+    val categoryById = remember(categories) {
+        categories.associateBy { it.id }
+    }
+
+    val spentPercentage = (progress * 100).toInt()
+    val ringPercent = progress * 360f
+
+    val percentColor = when (spentPercentage) {
         in 0..79 -> MaterialTheme.colorScheme.onBackground
         in 80..99 -> orangeColor
         else -> MaterialTheme.colorScheme.onSurfaceVariant
     }
 
     Column(
-        modifier = modifier.fillMaxSize().padding(top = 25.dp)
+        modifier = modifier
+            .fillMaxSize()
+            .padding(top = 25.dp)
             .background(color = MaterialTheme.colorScheme.background),
         verticalArrangement = Arrangement.Top
     ) {
-
-        // Home
         Text(
             text = stringResource(R.string.home),
             fontSize = largeFontSize,
@@ -134,19 +138,20 @@ fun Home(modifier: Modifier = Modifier, spent: Double, budget: Int) {
 
         // Spent | Budget
         Surface(
-            modifier = Modifier.fillMaxWidth().padding(10.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp),
             shape = RoundedCornerShape(roundDp),
             color = MaterialTheme.colorScheme.secondary,
             border = BorderStroke(0.dp, MaterialTheme.colorScheme.tertiary)
         ) {
             Row(
-                modifier = Modifier.padding(10.dp)
+                modifier = Modifier
+                    .padding(10.dp)
                     .fillMaxWidth()
                     .height(IntrinsicSize.Min),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-
-                // Spent Column
                 Column(
                     modifier = Modifier.weight(1f),
                     horizontalAlignment = Alignment.CenterHorizontally
@@ -157,16 +162,19 @@ fun Home(modifier: Modifier = Modifier, spent: Double, budget: Int) {
                         color = MaterialTheme.colorScheme.primary
                     )
                     Text(
-                        text = "$" + centsNumberFormatter.format(spent),
+                        text = formatCents(spentCents),
                         fontSize = mediumFontSize,
                         maxLines = 1,
-                        color = MaterialTheme.colorScheme.onSecondary
+                        color = if(percentColor == MaterialTheme.colorScheme.onBackground) {
+                            Color.White
+                        } else {
+                            percentColor
+                        }
                     )
                 }
 
-                // Line in between Spent and Budget
                 Canvas(
-                    modifier = Modifier.padding(0.dp)
+                    modifier = Modifier
                         .fillMaxHeight()
                         .width(1.dp)
                 ) {
@@ -178,35 +186,92 @@ fun Home(modifier: Modifier = Modifier, spent: Double, budget: Int) {
                     )
                 }
 
-                // Budget Column
                 Column(
                     modifier = Modifier.weight(1f),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "" + stringResource(R.string.budget),
+                        text = stringResource(R.string.budget),
                         fontSize = mediumFontSize,
                         color = MaterialTheme.colorScheme.primary
                     )
                     Text(
-                        text = "$" + noCentsNumberFormatter.format(budget),
+                        text = formatCents(budgetCents),
                         fontSize = mediumFontSize,
                         maxLines = 1,
-                        //added budget clcikable
-                        modifier = Modifier.clickable { showBudgetDialog = true }
+                        modifier = Modifier
+                            .clickable { showBudgetDialog = true }
+                            .padding(8.dp)
                     )
                 }
             }
         }
+        //setting budget
+        if (showBudgetDialog) {
+            AlertDialog(
+                onDismissRequest = { showBudgetDialog = false },
+                title = {
+                    Text(
+                        "Set Budget",
+                        color = MaterialTheme.colorScheme.secondary
+                    )
+                },
+                text = {
+                    OutlinedTextField(
+                        value = newBudgetText,
+                        onValueChange = { newBudgetText = it },
+                        label = {
+                            Text(
+                                "Enter budget in dollars",
+                                color = MaterialTheme.colorScheme.secondary
+                            )
+                        },
+                        textStyle = LocalTextStyle.current.copy(
+                            color = MaterialTheme.colorScheme.secondary
+                        ),
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            keyboardType = KeyboardType.Number
+                        )
+
+                    )
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            val cents = newBudgetText.toLongOrNull()?.times(100) ?: 0L
+                            onSetBudget(cents)
+                            showBudgetDialog = false
+                        },
+                        colors = ButtonDefaults.textButtonColors(
+                            contentColor = MaterialTheme.colorScheme.secondary
+                        )
+                    ) {
+                        Text("Confirm")
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = { showBudgetDialog = false },
+                        colors = ButtonDefaults.textButtonColors(
+                            contentColor = MaterialTheme.colorScheme.secondary
+                        )
+                    ) {
+                        Text("Cancel")
+                    }
+                },
+                containerColor = MaterialTheme.colorScheme.surface
+            )
+        }
+
 
         // Ring
         Box(
-            modifier = Modifier.fillMaxWidth().padding(10.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp),
             contentAlignment = Alignment.Center
         ) {
-            Canvas(
-                modifier = Modifier.size(200.dp)
-            ) {
+            Canvas(modifier = Modifier.size(200.dp)) {
                 val strokeWidth = 65f
                 val diameter = size.minDimension
                 val arcSize = Size(
@@ -214,8 +279,8 @@ fun Home(modifier: Modifier = Modifier, spent: Double, budget: Int) {
                     height = diameter - strokeWidth
                 )
                 val topLeft = Offset(
-                    (size.width - arcSize.width)/2f,
-                    (size.height - arcSize.height)/2f
+                    (size.width - arcSize.width) / 2f,
+                    (size.height - arcSize.height) / 2f
                 )
                 drawCircle(color = materialPrimary)
                 drawCircle(color = materialBackground, radius = 200f)
@@ -230,33 +295,45 @@ fun Home(modifier: Modifier = Modifier, spent: Double, budget: Int) {
                 )
             }
             Text(
-                text = noCentsNumberFormatter.format(spentPercentage) + "%",
+                text = "$spentPercentage%",
                 fontSize = largeFontSize,
                 color = percentColor
             )
         }
-        Row(
-            modifier = Modifier.fillMaxWidth()
-        ) {
+
+        Row(modifier = Modifier.fillMaxWidth()) {
             Text(
                 text = stringResource(R.string.recent_expenses),
                 fontSize = mediumFontSize,
-                modifier = Modifier.padding(horizontal = 10.dp)
+                modifier = Modifier
+                    .padding(horizontal = 10.dp)
                     .padding(bottom = 12.dp)
             )
         }
 
-        //added swipe to delete to new ui
+        // Expenses List
         LazyColumn(
-            modifier = Modifier.padding(0.dp),
+            modifier = Modifier
+                .fillMaxWidth(),
+                //.weight(1f),
             verticalArrangement = Arrangement.spacedBy(0.dp)
         ) {
-            items(expenses, key = { it.hashCode() }) { expense ->
+            items(
+                expenses,
+                key = { it.id }
+            ) { expense ->
                 val dismissState = rememberSwipeToDismissBoxState(
                     confirmValueChange = { value ->
-                        value != SwipeToDismissBoxValue.Settled
+                        if (value != SwipeToDismissBoxValue.Settled) {
+                            onDeleteExpense(expense)
+                            true
+                        } else false
                     }
                 )
+
+                val categoryUi =
+                    categoryById[expense.categoryId]?.toUi()
+                        ?: CategoryUi("Uncategorized", MaterialTheme.colorScheme.tertiary)
 
                 SwipeToDismissBox(
                     state = dismissState,
@@ -270,8 +347,7 @@ fun Home(modifier: Modifier = Modifier, spent: Double, budget: Int) {
                             horizontalArrangement = Arrangement.End,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            // DELETE
-                            IconButton(onClick = { expenses.remove(expense) }) {
+                            IconButton(onClick = { onDeleteExpense(expense) }) {
                                 Icon(
                                     imageVector = Icons.Default.Close,
                                     contentDescription = "Delete",
@@ -279,10 +355,7 @@ fun Home(modifier: Modifier = Modifier, spent: Double, budget: Int) {
                                 )
                             }
                             Spacer(modifier = Modifier.width(16.dp))
-                            // EDIT
-                            IconButton(onClick = {
-                                // adding edit (maybe)
-                            }) {
+                            IconButton(onClick = { /* TODO edit */ }) {
                                 Icon(
                                     imageVector = Icons.Default.Settings,
                                     contentDescription = "Edit",
@@ -292,68 +365,53 @@ fun Home(modifier: Modifier = Modifier, spent: Double, budget: Int) {
                         }
                     },
                     content = {
-                        ExpenseCard(expense = expense)
+                        ExpenseCard(
+                            expense = expense,
+                            category = categoryUi
+                        )
                     }
                 )
             }
         }
-    }
-    //EDITING BUDGET
-    //need to change colors for the alertbox and ok/canvel
-    if (showBudgetDialog) {
-        AlertDialog(
-            onDismissRequest = { showBudgetDialog = false },
-            title = { Text("Set Budget") },
-            text = {
-                OutlinedTextField(
-                    value = newBudgetText,
-                    onValueChange = { newBudgetText = it },
-                    label = { Text("Enter new budget") }
-                )
-            },
-            confirmButton = {
-                TextButton(onClick = {
-                    val parsed = newBudgetText.toDoubleOrNull()
-                    if (parsed != null) {
-                        budget = parsed
-                    }
-                    showBudgetDialog = false
-                    newBudgetText = ""
-                }) {
-                    Text("OK")
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = {
-                    showBudgetDialog = false
-                    newBudgetText = ""
-                }) {
-                    Text("Cancel")
-                }
-            }
-        )
     }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun HomePreview() {
-    BudgetAppTheme(false) {
-        Scaffold(
-            bottomBar = {
-                Box(
-                    modifier = Modifier.background(MaterialTheme.colorScheme.background)
-                        .padding(horizontal = 20.dp)
-                        .padding(top = 8.dp, bottom = 32.dp)
-                ) {
-                    NavigationBarPreview()
-                }
-            }
-        ) { innerPadding ->
-            Home(
-                modifier = Modifier.padding(innerPadding),
-                budget = budget,
-                spent = spent
+    BudgetAppTheme(darkTheme = false) {
+        val previewCategories = listOf(
+            Category(id = 1, name = "Groceries", color = color4.toArgb()),
+            Category(id = 2, name = "Gas", color = color8.toArgb())
+        )
+
+        val previewExpenses = listOf(
+            Expense(
+                id = 1,
+                categoryId = 1,
+                description = "Trader Joe's",
+                amountCents = 1539,
+                dateEpochMillis = System.currentTimeMillis(),
+                isRecurring = false
+            ),
+            Expense(
+                id = 2,
+                categoryId = 2,
+                description = "Shell",
+                amountCents = 4200,
+                dateEpochMillis = System.currentTimeMillis(),
+                isRecurring = false
+            )
+        )
+
+        Scaffold { innerPadding ->
+            HomeContent(
+                budgetCents = 100_000, // $1000.00
+                expenses = previewExpenses,
+                categories = previewCategories,
+                onDeleteExpense = {},
+                onSetBudget = {},
+                modifier = Modifier.padding()
             )
         }
     }
